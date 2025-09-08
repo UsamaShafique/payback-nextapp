@@ -4,21 +4,19 @@ import { Modal } from "react-bootstrap";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
+import { WalletButton } from "./WalletButton";
+import { useAccount } from "wagmi";
 
 const Banner: React.FC = () => {
-  // tab key
-  const [key, setKey] = useState<string>("gtd");
-  const [connect, setConnect] = useState<boolean>(true);
+  const { isConnected } = useAccount();
 
-  // input value
+  const [key, setKey] = useState<string>("gtd");
   const [value, setValue] = useState<number | "">(1);
 
-  // Mint successful
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const handleCloseSuccess = () => setShowSuccess(false);
   const handleShowSuccess = () => setShowSuccess(true);
 
-  // Mint unsuccessful
   const [showFailure, setShowFailure] = useState<boolean>(false);
   const handleCloseFailure = () => setShowFailure(false);
   const handleShowFailure = () => setShowFailure(true);
@@ -80,7 +78,7 @@ const Banner: React.FC = () => {
           >
             <Tab eventKey="gtd" title="GTD">
               <h1 className="whitlisthead">GTD</h1>
-              {!connect && (
+              {!isConnected && (
                 <>
                   <div className="maininput">
                     <button className="signbutton" onClick={decrease}>
@@ -142,9 +140,9 @@ const Banner: React.FC = () => {
                 <div className="innergtd">
                   <p className="gtdpara">Start time</p>
                   <h6 className="gtdhead">
-                    {!connect && <span>27th Aug</span>}
+                    {!isConnected && <span>27th Aug</span>}
                     14:18:13
-                    {!connect && <span>EST</span>}
+                    {!isConnected && <span>EST</span>}
                   </h6>
                 </div>
                 <div className="innergtd">
@@ -152,26 +150,17 @@ const Banner: React.FC = () => {
                   <h6 className="gtdhead">TBD</h6>
                 </div>
               </div>
-              {connect && (
+              {isConnected && (
                 <p className="publicpara">public mint starts in 2 days</p>
               )}
-              {connect ? (
-                <button
-                  className="connectbtn"
-                  onClick={() => {
-                    setConnect(!connect);
-                  }}
-                >
-                  Connect Wallet
-                </button>
-              ) : (
-                // dullbtn is the other class
+              {isConnected ? (
                 <button className="mintbtn" onClick={handleShowSuccess}>
                   Mint now
                 </button>
+              ) : (
+                <WalletButton />
               )}
-              {/* redspan is the other class  */}
-              {!connect && (
+              {isConnected && (
                 <span className="eligiblespan">
                   You are eligible to Mint NFT
                 </span>
@@ -180,7 +169,7 @@ const Banner: React.FC = () => {
 
             <Tab eventKey="fcfs" title="FCFS">
               <h1 className="whitlisthead">FCFS</h1>
-              {!connect && (
+              {!isConnected && (
                 <>
                   <div className="maininput">
                     <button className="signbutton" onClick={decrease}>
@@ -242,9 +231,9 @@ const Banner: React.FC = () => {
                 <div className="innergtd">
                   <p className="gtdpara">Start time</p>
                   <h6 className="gtdhead">
-                    {!connect && <span>27th Aug</span>}
+                    {!isConnected && <span>27th Aug</span>}
                     14:18:13
-                    {!connect && <span>EST</span>}
+                    {!isConnected && <span>EST</span>}
                   </h6>
                 </div>
                 <div className="innergtd">
@@ -252,26 +241,18 @@ const Banner: React.FC = () => {
                   <h6 className="gtdhead">TBD</h6>
                 </div>
               </div>
-              {connect && (
+              {isConnected && (
                 <p className="publicpara">public mint starts in 2 days</p>
               )}
-              {connect ? (
-                <button
-                  className="connectbtn"
-                  onClick={() => {
-                    setConnect(!connect);
-                  }}
-                >
-                  Connect Wallet
-                </button>
+              {!isConnected ? (
+                <WalletButton className="connectbtn" />
               ) : (
                 // dullbtn is the other class
                 <button className="mintbtn" onClick={handleShowSuccess}>
                   Mint now
                 </button>
               )}
-              {/* redspan is the other class  */}
-              {!connect && (
+              {isConnected && (
                 <span className="eligiblespan">
                   You are eligible to Mint NFT
                 </span>
@@ -280,7 +261,7 @@ const Banner: React.FC = () => {
 
             <Tab eventKey="public" title="Public">
               <h1 className="whitlisthead">Public</h1>
-              {!connect && (
+              {!isConnected && (
                 <>
                   <div className="maininput">
                     <button className="signbutton" onClick={decrease}>
@@ -342,9 +323,9 @@ const Banner: React.FC = () => {
                 <div className="innergtd">
                   <p className="gtdpara">Start time</p>
                   <h6 className="gtdhead">
-                    {!connect && <span>27th Aug</span>}
+                    {!isConnected && <span>27th Aug</span>}
                     14:18:13
-                    {!connect && <span>EST</span>}
+                    {!isConnected && <span>EST</span>}
                   </h6>
                 </div>
                 <div className="innergtd">
@@ -352,26 +333,17 @@ const Banner: React.FC = () => {
                   <h6 className="gtdhead">TBD</h6>
                 </div>
               </div>
-              {connect && (
+              {isConnected && (
                 <p className="publicpara">public mint starts in 2 days</p>
               )}
-              {connect ? (
-                <button
-                  className="connectbtn"
-                  onClick={() => {
-                    setConnect(!connect);
-                  }}
-                >
-                  Connect Wallet
-                </button>
+              {!isConnected ? (
+                <WalletButton className="connectbtn" />
               ) : (
-                // dullbtn is the other class
                 <button className="mintbtn" onClick={handleShowSuccess}>
                   Mint now
                 </button>
               )}
-              {/* redspan is the other class  */}
-              {!connect && (
+              {isConnected && (
                 <span className="eligiblespan">
                   You are eligible to Mint NFT
                 </span>

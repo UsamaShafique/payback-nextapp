@@ -1,12 +1,16 @@
-import { useState } from "react";
 import "../styles/header.scss";
 import { Offcanvas } from "react-bootstrap";
+import { useAccount, useDisconnect } from "wagmi";
+import { useState } from "react";
+import { WalletButton } from "./WalletButton";
 
 const Header: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
 
   const handleCloseSidebar = () => setShowSidebar(false);
   const handleShowSidebar = () => setShowSidebar(true);
+  const { isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
 
   return (
     <>
@@ -15,8 +19,13 @@ const Header: React.FC = () => {
           <img src="/assets/logo.png" alt="logoimg" className="logoimg" />
         </a>
         <div className="navbtns">
-          <a href="/" target="_blank" className="linkmain" rel="noopener noreferrer">
-        <svg
+          <a
+            href="/"
+            target="_blank"
+            className="linkmain"
+            rel="noopener noreferrer"
+          >
+            <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="30"
@@ -36,8 +45,15 @@ const Header: React.FC = () => {
               </defs>
             </svg>
           </a>
-          <button className="disconnectbtn">Disconnect</button>
-           <svg
+          {isConnected ? (
+            <button className="disconnectbtn" onClick={() => disconnect()}>
+              Disconnect
+            </button>
+          ) : (
+            <WalletButton className="connectbtn" />
+          )}
+
+          <svg
             xmlns="http://www.w3.org/2000/svg"
             width="26"
             height="26"
@@ -90,35 +106,7 @@ const Header: React.FC = () => {
           </button>
         </Offcanvas.Header>
         <Offcanvas.Body>
-             <div className="innercontent">
-            {/* <button className="web">
-              {" "}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="25"
-                height="24"
-                viewBox="0 0 25 24"
-                fill="none"
-              >
-                <g clip-path="url(#clip0_26_622)">
-                  <path
-                    d="M20.9853 3.51474C18.7188 1.24819 15.7053 0 12.5 0C9.29471 0 6.2812 1.24819 4.01474 3.51469C1.74819 5.7812 0.5 8.79471 0.5 12C0.5 15.2053 1.74819 18.2188 4.01474 20.4853C6.2812 22.7518 9.29471 24 12.5 24C15.7054 24 18.7188 22.7518 20.9854 20.4853C23.2518 18.2188 24.5 15.2053 24.5 12C24.5 8.79466 23.2518 5.7812 20.9853 3.51474ZM5.01013 4.51013C6.06534 3.45493 7.30411 2.65008 8.6543 2.12475C8.29467 2.57372 7.95816 3.08977 7.64976 3.67018C7.29159 4.34424 6.98254 5.08454 6.72515 5.87528C5.83349 5.72729 5.00732 5.54532 4.26923 5.33176C4.50056 5.04742 4.74735 4.77292 5.01013 4.51013ZM3.41699 6.54306C4.28029 6.81948 5.26757 7.05259 6.34486 7.23723C6.04485 8.51064 5.86828 9.88094 5.82614 11.2962H1.93138C2.042 9.59777 2.5521 7.97683 3.41699 6.54306ZM3.34035 17.3268C2.52214 15.9253 2.03867 14.3511 1.93133 12.7039H5.82881C5.87484 14.0787 6.0479 15.41 6.33778 16.6501C5.23837 16.8283 4.22629 17.0555 3.34035 17.3268ZM5.01013 19.4899C4.71107 19.1908 4.43254 18.8767 4.1743 18.5498C4.93945 18.3377 5.79482 18.158 6.71559 18.0139C6.97481 18.8156 7.28719 19.5657 7.64972 20.2481C7.98581 20.8806 8.35533 21.4363 8.75175 21.9124C7.36378 21.3882 6.0907 20.5704 5.01013 19.4899ZM11.7961 22.4117C10.727 22.1122 9.71564 21.1359 8.89289 19.5875C8.60513 19.046 8.35237 18.4552 8.13586 17.8256C9.29508 17.698 10.5286 17.6226 11.7961 17.6049V22.4117ZM11.7961 16.1971C10.3905 16.2162 9.02034 16.3045 7.73723 16.4552C7.4542 15.2852 7.2839 14.0187 7.23717 12.7039H11.7962V16.1971H11.7961ZM11.7961 11.2961H7.2345C7.2772 9.94455 7.45022 8.64278 7.74206 7.44297C9.01697 7.60234 10.3842 7.69928 11.7961 7.72703V11.2961ZM11.7961 6.31914C10.5237 6.2935 9.29288 6.21053 8.14186 6.07515C8.35706 5.45209 8.60784 4.86728 8.89289 4.3307C9.7156 2.78232 10.727 1.806 11.7961 1.50652V6.31914ZM21.6274 6.61783C22.4652 8.03312 22.9599 9.62716 23.0688 11.2961H19.174C19.1323 9.89721 18.9591 8.54228 18.6654 7.28144C19.7498 7.10631 20.7493 6.88351 21.6274 6.61783ZM19.9899 4.51013C20.2725 4.79274 20.5365 5.08899 20.7827 5.39654C20.0293 5.60228 19.1903 5.77689 18.2888 5.91742C18.0287 5.11079 17.7149 4.35624 17.3503 3.67018C17.0419 3.08977 16.7054 2.57372 16.3458 2.12475C17.6959 2.65008 18.9347 3.45493 19.9899 4.51013ZM13.2039 12.7039H17.7629C17.7159 14.029 17.5433 15.305 17.2562 16.4826C15.9815 16.3241 14.6148 16.2281 13.2039 16.2011V12.7039ZM13.2039 11.2961V7.73172C14.6104 7.71325 15.9816 7.62573 17.2659 7.47559C17.553 8.66636 17.7232 9.95679 17.7655 11.2961H13.2039ZM13.2038 1.50652H13.2039C14.273 1.806 15.2844 2.78232 16.1071 4.3307C16.3967 4.87571 16.6509 5.4706 16.8684 6.10482C15.7076 6.23195 14.4727 6.30681 13.2038 6.32392V1.50652ZM13.2039 22.4117V17.609C14.4752 17.6339 15.705 17.7161 16.8556 17.8506C16.641 18.4709 16.391 19.0532 16.1072 19.5875C15.2844 21.1359 14.273 22.1122 13.2039 22.4117ZM19.9899 19.4899C18.9093 20.5704 17.6363 21.3882 16.2483 21.9123C16.6447 21.4363 17.0142 20.8806 17.3503 20.2481C17.7075 19.5758 18.0158 18.8377 18.2728 18.0493C19.1852 18.2 20.0293 18.3862 20.7813 18.6052C20.5355 18.9121 20.272 19.2078 19.9899 19.4899ZM21.6222 17.3911C20.7487 17.1103 19.7472 16.874 18.6538 16.6875C18.9489 15.4369 19.1248 14.0925 19.1713 12.7039H23.0688C22.9597 14.3763 22.4633 15.9736 21.6222 17.3911Z"
-                    fill="black"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_26_622">
-                    <rect
-                      width="24"
-                      height="24"
-                      fill="white"
-                      transform="translate(0.5)"
-                    />
-                  </clipPath>
-                </defs>
-              </svg>
-              Visit website
-            </button> */}
+          <div className="innercontent">
             <button className="web">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +137,13 @@ const Header: React.FC = () => {
           </div>
         </Offcanvas.Body>
         <div className="endbutton">
-          <button className="disconnect">Disconnect</button>
+          {isConnected ? (
+            <button className="disconnect" onClick={() => disconnect()}>
+              Disconnect
+            </button>
+          ) : (
+            <WalletButton className="connectbtn" />
+          )}
         </div>
       </Offcanvas>
     </>

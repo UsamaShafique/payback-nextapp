@@ -1,20 +1,22 @@
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { arbitrum } from 'wagmi/chains'
+import { mainnet } from 'wagmi/chains'
 import { metaMask, walletConnect } from 'wagmi/connectors'
 
 export function getConfig() {
   return createConfig({
-    chains: [arbitrum],
+    chains: [mainnet],
     connectors: [
       metaMask(),
-      walletConnect({ projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID || '202a3d538b088d735b99722b0cea4910' }),
+      walletConnect({
+        projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID!, // projectID Loaded directly from .env 
+      }),
     ],
     storage: createStorage({
       storage: cookieStorage,
     }),
     ssr: true,
     transports: {
-      [arbitrum.id]: http(),
+      [mainnet.id]: http(),
     },
   })
 }
@@ -26,8 +28,8 @@ declare module 'wagmi' {
 }
 
 export const config = createConfig({
-  chains: [arbitrum],
+  chains: [mainnet],
   transports: {
-    [arbitrum.id]: http(),
+    [mainnet.id]: http(),
   },
 })
