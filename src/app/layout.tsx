@@ -12,8 +12,8 @@ import Script from 'next/script'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Gems rocks',
-  description: 'From gems',
+  title: 'Mint DAPP',
+  description: 'From Mint DAPP',
 }
 
 export default function RootLayout(props: { children: ReactNode }) {
