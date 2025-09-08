@@ -1,0 +1,89 @@
+import React, { FC } from "react";
+import { Modal } from "react-bootstrap";
+
+type DynamicModalProps = {
+  show: boolean;
+  onHide: () => void;
+  type: "success" | "failure";
+  mintedId?: string; // only needed for success modal
+};
+
+const DynamicModal: FC<DynamicModalProps> = ({ show, onHide, type }) => {
+  const isSuccess = type === "success";
+
+  return (
+    <Modal show={show} onHide={onHide} centered className="bannermodal">
+      <Modal.Body>
+        {/* Close Button */}
+        <button className="closebtn" onClick={onHide}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="69"
+            height="69"
+            viewBox="0 0 69 69"
+            fill="none"
+          >
+            <path
+              d="M21.5811 21.5811L47.9998 47.9998"
+              stroke="#121212"
+              strokeWidth="5"
+              strokeLinecap="square"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M21.5813 47.9998L48 21.5811"
+              stroke="#121212"
+              strokeWidth="5"
+              strokeLinecap="square"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+
+        {/* Images */}
+        {isSuccess ? (
+          <>
+            <img
+              src="/assets/modalhappyimg.png"
+              alt="modalimg"
+              className="modalimg d-noneformobile"
+            />
+            <img
+              src="/assets/modalhappyimg.png"
+              alt="modalimg"
+              className="modalimg d-none d-blockformobile"
+            />
+          </>
+        ) : (
+          <img
+            src="/assets/modaunhappy.png"
+            alt="modalimg"
+            className="modalimg"
+          />
+        )}
+
+        {/* Texts */}
+        <div
+          className="modaltexts"
+          style={!isSuccess ? { marginTop: "9.027vw" } : {}}
+        >
+          <h1 className="modalhead">
+            {isSuccess ? "Mint successful!" : "Mint UNsuccessful!"}
+          </h1>
+
+          {isSuccess && (
+            <>
+              <p className="modalpara">You minted #1024</p>
+              <div className="modalbtns">
+                <button className="innerbtn">View explorer</button>
+                <button className="innerbtn">View collection</button>
+              </div>
+            </>
+          )}
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default DynamicModal;

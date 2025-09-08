@@ -1,0 +1,196 @@
+.mainnavbar {
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.041vw 4.166vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
+
+    .logolink {
+        text-decoration: none;
+        margin: 0;
+
+        .logoimg {
+            width: 2.708vw;
+            height: 3.472vw;
+            pointer-events: none;
+        }
+    }
+
+    .navbtns {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.6944vw;
+
+        .disconnectbtn {
+            border-radius: 5.555vw;
+            border: 0.3472vw solid #000;
+            background: #E86761;
+            box-shadow: 0 0.6944vw 0 0 #000;
+            display: flex;
+            padding: 1vw 2.7777vw;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            text-align: center;
+            font-size: 1.3888vw;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 120%;
+        }
+
+        .linkmain {
+            border-radius: 2.430vw;
+            border: 0.138vw solid #000;
+            background: #FFF;
+            box-shadow: 0 0.277vw 0 0 #000;
+            display: flex;
+            width: 3.472vw;
+            height: 3.472vw;
+            justify-content: center;
+            align-items: center;
+
+            svg {
+                width: 1.66vw;
+                height: 2.083vw;
+                flex-shrink: 0;
+            }
+        }
+    }
+}
+
+.payback {
+    background: #091416;
+    max-width: 100% !important;
+    width: 100% !important;
+
+    .offcanvas-header {
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .logosidebar {
+            width: 30px;
+            height: 38px;
+        }
+
+        .closebtn {
+            display: flex;
+            width: 34px;
+            height: 34px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 17.246px;
+            border: 2.464px solid #000;
+            background: #FFF;
+            box-shadow: 0 0 0 0 #000;
+        }
+    }
+
+    // .btn-close {
+    //     // background: url(../../close-circle.svg);
+    //     background: url(../../../assets/cross.svg);
+    //     background-repeat: no-repeat;
+    //     background-size: cover;
+    //     background-position: contain;
+    //  width: 34px;
+    //   height: 34px;
+    //     box-shadow: none !important;
+    //     opacity: unset;
+    //     position: absolute;
+    //     padding: 0px;
+    //     margin: 0px;
+    //     top: 21px;
+    //     right: 21px;
+    // }
+    .endbutton {
+        position: absolute;
+        bottom: 0px;
+        padding: 20px 20px 60px;
+        width: 100%;
+        left: 0;
+        right: 0;
+
+        .disconnect {
+            border-radius: 80px;
+            border: 5px solid #000;
+            background: #E86761;
+            padding: 20px 40px;
+            width: 100%;
+            color: #000;
+            text-align: center;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 120%;
+            width: 100%;
+            box-shadow: 0 4px 0 0 #000;
+        }
+    }
+
+    .offcanvas-body {
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        position: relative;
+
+
+
+        .innercontent {
+            padding: 20px;
+            margin-top: 20px;
+
+            .web {
+                border-radius: 80px;
+                border: 5px solid #000;
+                background: #FFF;
+                box-shadow: 0 4px 0 0 #000;
+                padding: 20px 40px;
+                width: 100%;
+                color: #000;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 120%;
+                margin-bottom: 25px;
+
+                &:last-child {
+                    margin-bottom: 0px;
+                }
+            }
+        }
+    }
+}
+
+@media(max-width:991px) {
+    .mainnavbar {
+        width: 100%;
+        padding: 21px 20px 21px 30px;
+        position: absolute !important;
+    }
+
+    .mainnavbar .logolink .logoimg {
+        width: 30px;
+        height: 38px;
+    }
+
+    .mainnavbar .navbtns .linkmain {
+        display: none;
+    }
+
+    .mainnavbar .navbtns .disconnectbtn {
+        display: none !important;
+    }
+}

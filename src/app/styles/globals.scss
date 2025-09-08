@@ -1,0 +1,113 @@
+@import "bootstrap/scss/bootstrap";
+// :root {
+//   background-color: #181818;
+//   color: rgba(255, 255, 255, 0.87);
+//   color-scheme: light dark;
+//   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+//   font-synthesis: none;
+//   font-weight: 400;
+//   line-height: 1.5;
+//   text-rendering: optimizeLegibility;
+
+//   -webkit-font-smoothing: antialiased;
+//   -moz-osx-font-smoothing: grayscale;
+//   -webkit-text-size-adjust: 100%;
+// }
+
+// @media (prefers-color-scheme: light) {
+//   :root {
+//     background-color: #f8f8f8;
+//     color: #181818;
+//   }
+// }
+
+
+@font-face {
+  font-family: "dkfrozenmemory";
+  src: url("../fonts/dkfrozenmemory.otf");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Nulshock";
+  src: url("../fonts/nulshock.ttf");
+  font-weight: 700;
+}
+
+* {
+  --wcm-z-index: 99999999999;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "dkfrozenmemory" !important;
+  background: #000;
+  color: #FFF;
+}
+
+// All transitions
+div,
+ul,
+a,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+button {
+  -webkit-transition: background-color 0.7s ease-out;
+  -moz-transition: background-color 1s ease-out;
+  -o-transition: background-color 1s ease-out;
+  transition: background-color 1s ease-out;
+}
+
+div,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea:focus-visible {
+  outline: none !important;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea:focus {
+  outline: none !important;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.40);
+  opacity: 1 !important;
+  backdrop-filter: blur(5px);
+}
