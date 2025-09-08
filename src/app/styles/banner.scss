@@ -1,0 +1,676 @@
+.mainbanner {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    overflow: hidden;
+
+    .bannerbg {
+        height: 100vh;
+        width: 100vw;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        object-fit: cover;
+        object-position: center;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .leftman {
+        width: 26.25vw;
+        height: 39.37vw;
+        position: absolute;
+        top: 16.944vw;
+        left: 8vw;
+        pointer-events: none;
+    }
+
+    .rightman {
+        position: absolute;
+        right: -21.66vw;
+        bottom: -6.805vw;
+        width: 48.263vw;
+        height: 39.513vw;
+
+        .rightmanimg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transform: rotate(-11.07deg);
+        }
+
+        .innertexts {
+            display: flex;
+            flex-direction: column;
+            gap: 0.833vw;
+            max-width: fit-content;
+            position: absolute;
+            top: 6.3vw;
+            left: 2vw;
+            z-index: 9;
+            transform: rotate(-13.512deg);
+
+            .numbers {
+                color: #000;
+                text-align: center;
+                font-family: 'Nulshock';
+                font-size: 2.361vw;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 100%;
+            }
+
+            .mintedhead {
+                color: #000;
+                text-align: center;
+                font-size: 4.861vw;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 100%;
+            }
+        }
+    }
+
+    .bannertexts {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        // padding-top: 11.8055vw;
+        position: absolute;
+        top: 18vh;
+        left: 51%;
+        transform: translate(-50%, 0%);
+
+        .bannertabs {
+            display: flex;
+            width: 35.9722vw;
+            padding: 0.4166vw;
+            align-items: center;
+            border-radius: 2.56944vw;
+            border: 0.2777vw solid #000;
+            box-shadow: 0 0.2472vw 0 0 #000;
+            justify-content: space-between;
+            margin-bottom: 1.87500vw;
+
+            .nav-link.active,
+            .nav-item.show .nav-link {
+                color: #FFF !important;
+                background: #000;
+            }
+
+            .nav-item {
+                width: 33.3%;
+
+                .nav-link {
+                    display: flex;
+                    padding: 0.6944vw;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 3.9583vw;
+                    color: #004B13;
+                    text-align: center;
+                    font-family: 'Nulshock';
+                    font-size: 1.25vw;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 120%;
+                    width: 100%;
+                    border: none !important;
+                    outline: none !important;
+                }
+            }
+        }
+
+        .whitlisthead {
+            color: #004B13;
+            text-align: center;
+            font-size: 3.12500vw;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 120%;
+            white-space: nowrap;
+            margin-bottom: 1.388vw;
+        }
+
+        .maingtd {
+            width: 38.888vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.1vw;
+            margin: 0 auto 1.3888vw;
+
+            .innergtd {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 0.6944vw;
+                width: 100%;
+
+                .gtdpara {
+                    color: #004B13;
+                    text-align: center;
+                    font-family: 'Nulshock';
+                    font-size: 0.97222vw;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 100%;
+                }
+
+                .gtdhead {
+                    color: #004B13;
+                    text-align: center;
+                    font-family: 'Nulshock';
+                    font-size: 2.36111vw;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 0.6944vw;
+
+                    span {
+                        color: #288741;
+                        text-align: center;
+                        font-size: 0.8333vw;
+                        font-style: normal;
+                        font-weight: 400;
+                        line-height: 100%;
+                    }
+                }
+            }
+        }
+
+        .publicpara {
+            color: #004B13;
+            text-align: center;
+            font-size: 1.111vw;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 120%;
+            white-space: nowrap;
+            margin-bottom: 1.388vw;
+        }
+
+        .connectbtn {
+            display: flex;
+            padding: 1.189vw 2.3784vw;
+            justify-content: center;
+            align-items: center;
+            border-radius: 4.722vw;
+            border: 0.347vw solid #000;
+            background: #75FFFF;
+            box-shadow: 0 0.594vw 0 0 #000;
+            color: #000;
+            text-align: center;
+            font-size: 2.3611vw;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 120%;
+            white-space: nowrap;
+            margin: 0 auto;
+            max-width: fit-content;
+        }
+
+        .mintbtn {
+            display: flex;
+            padding: 1.189vw 2.3784vw;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5.555vw;
+            border: 0.347vw solid #000;
+            background: #FFF;
+            box-shadow: 0 0.694vw 0 0 #000;
+            color: #000;
+            text-align: center;
+            font-size: 2.3611vw;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 120%;
+            white-space: nowrap;
+            max-width: fit-content;
+            margin: 0 auto 1.388vw;
+        }
+
+        .dullbtn {
+            opacity: 0.3;
+        }
+
+        .maininput {
+            display: flex;
+            align-items: center;
+            gap: 0.6944vw;
+            width: 38.888vw;
+            justify-content: center;
+            margin: 0 auto 1.388vw;
+
+            .signbutton {
+                display: flex;
+                width: 3.402vw;
+                height: 3.402vw;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                border-radius: 2.4305vw;
+                border: 0.1388vw solid #000;
+                background: #FFF;
+                box-shadow: 0 0.4861vw 0 0 #000;
+
+                svg {
+                    width: 3.333vw;
+                    height: 3.333vw;
+                }
+            }
+
+            .numberinput {
+                border-radius: 5.902vw;
+                border: 0.138vw solid #000;
+                background: #FFF;
+                box-shadow: 0 0.4861vw 0 0 #000;
+                height: 3.402vw;
+                padding: 0 1.527vw;
+                color: #121212;
+                font-family: 'Nulshock';
+                font-size: 2.77vw;
+                font-style: normal;
+                font-weight: 700;
+                line-height: normal;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 38.888vw;
+            margin: 0 auto 1.388vw;
+
+            .detailpara {
+                color: #004B13;
+                text-align: center;
+                font-family: 'Nulshock';
+                font-size: 0.9722vw;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 100%;
+            }
+        }
+
+        .eligiblespan {
+            border-radius: 4.757vw;
+            border: 0.138vw solid #000;
+            background: #5CFF1D;
+            display: flex;
+            padding: 0.6944vw;
+            justify-content: center;
+            align-items: center;
+            color: #005315;
+            text-align: center;
+            font-size: 0.8333vw;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 120%;
+            max-width: fit-content;
+            margin: 0 auto;
+        }
+
+        .redspan {
+            background: #C20000;
+            color: #FFF;
+        }
+    }
+}
+
+.bannermodal {
+    .modal-dialog {
+        max-width: 45.972vw;
+
+        .modal-content {
+            border-radius: 1.388vw;
+            border: 0.3472vw solid #000;
+            height: 37.152vw;
+            position: relative;
+            background: #000;
+
+            .modal-body {
+                padding: 0;
+
+                .closebtn {
+                    display: flex;
+                    width: 4.791vw;
+                    height: 4.791vw;
+                    padding: 0 0;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 2.4305vw;
+                    border: 0.3472vw solid #000;
+                    background: #FFF;
+                    box-shadow: 0 0 0 0 #000;
+                    position: absolute;
+                    z-index: 9;
+                    top: -2.4vw;
+                    right: -2.4vw;
+
+                    svg {
+                        height: 4.861vw;
+                        width: 4.861vw;
+                    }
+                }
+
+                .modalimg {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    top: 0;
+                    object-fit: cover;
+                    object-position: center;
+                    pointer-events: none;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 1.2vw;
+                }
+
+                .modaltexts {
+                    position: relative;
+                    z-index: 9;
+                    display: flex;
+                    width: 23.472vw;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: flex-end;
+                    margin-left: auto;
+                    margin-top: 6.4583vw;
+                    margin-right: 2.9861vw;
+
+                    .modalhead {
+                        color: #8CFFE9;
+                        text-align: center;
+                        font-size: 2.777vw;
+                        font-style: normal;
+                        font-weight: 400;
+                        line-height: 120%;
+                        margin-bottom: 1.1805vw;
+                        white-space: nowrap;
+                    }
+
+                    .modalpara {
+                        color: #8CFFE9;
+                        text-align: center;
+                        font-family: 'Nulshock';
+                        font-size: 1.388vw;
+                        font-style: normal;
+                        font-weight: 700;
+                        line-height: 120%;
+                        margin-bottom: 1.1805vw;
+                    }
+
+                    .modalbtns {
+                        display: flex;
+                        width: 19.444vw;
+                        align-items: flex-start;
+                        gap: 0.6944vw;
+
+                        .innerbtn {
+                            color: #000;
+                            text-align: center;
+                            font-size: 0.9722vw;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: 120%;
+                            border-radius: 3.12500vw;
+                            border: 0.1971vw solid #000;
+                            background: #FFF;
+                            box-shadow: 0 0.394vw 0 0 #000;
+                            display: flex;
+                            padding: 0.4861vw 1.1805vw;
+                            justify-content: center;
+                            align-items: center;
+                            white-space: nowrap;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-height: 750px) {
+    .mainbanner .bannertexts {
+        top: 13vh;
+    }
+}
+
+@media(max-width:991px) {
+    .d-noneformobile {
+        display: none;
+    }
+
+    .d-blockformobile {
+        display: block !important;
+    }
+
+    .mainbanner {
+        width: 100%;
+        height: 956px;
+    }
+
+    .mainbanner .bannerbg {
+        height: 100%;
+    }
+
+    .mainbanner .bannertexts {
+        top: 150px;
+        width: 100%;
+    }
+
+    .mainbanner .bannertexts .bannertabs {
+        width: 308.042px;
+        border-radius: 21.714px;
+        border: 2px solid #000;
+        box-shadow: 0 2.089px 0 0 #000;
+        padding: 3.521px;
+        margin-bottom: 20px;
+    }
+
+    .mainbanner .bannertexts .bannertabs .nav-item .nav-link {
+        padding: 10px 20px;
+        border-radius: 33.452px;
+        font-size: 12px;
+    }
+
+    .mainbanner .bannertexts .whitlisthead {
+        font-size: 35px;
+        margin-bottom: 14px;
+    }
+
+    .mainbanner .bannertexts .maingtd {
+        width: 100%;
+        flex-direction: column;
+        gap: 20px;
+        margin: 0 auto 14px;
+    }
+
+    .mainbanner .bannertexts .maingtd .innergtd {
+        gap: 10px;
+    }
+
+    .mainbanner .bannertexts .maingtd .innergtd .gtdpara {
+        font-size: 12px;
+    }
+
+    .mainbanner .bannertexts .maingtd .innergtd .gtdhead {
+        font-size: 30px;
+        gap: 10px;
+
+        span {
+            font-size: 12px;
+        }
+    }
+
+    .mainbanner .bannertexts .publicpara {
+        font-size: 12px;
+        margin-bottom: 14px;
+    }
+
+    .mainbanner .bannertexts .connectbtn {
+        padding: 12.286px 24.571px;
+        border-radius: 49.143px;
+        border: 2px solid #000;
+        box-shadow: 0 6.143px 0 0 #000;
+        font-size: 20px;
+    }
+
+    .mainbanner .bannertexts .maininput {
+        gap: 10px;
+        width: 304px;
+        margin: 0 auto 14px;
+    }
+
+    .mainbanner .bannertexts .details {
+        width: 304px;
+        margin: 0 auto 14px;
+    }
+
+    .mainbanner .bannertexts .maininput .signbutton {
+        width: 30px;
+        height: 30px;
+        border-radius: 35px;
+        border: 2px solid #000;
+        box-shadow: 0 7px 0 0 #000;
+
+        svg {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
+    .mainbanner .bannertexts .maininput .numberinput {
+        height: 35px;
+        padding: 0 22px;
+        border-radius: 85px;
+        border: 2px solid #000;
+        font-size: 20px;
+        box-shadow: 0 7px 0 0 #000;
+    }
+
+    .mainbanner .bannertexts .details .detailpara {
+        font-size: 12px;
+    }
+
+    .mainbanner .bannertexts .mintbtn {
+        border-radius: 49.143px;
+        border: 2px solid #000;
+        padding: 12.286px 24.571px;
+        box-shadow: 0 6.143px 0 0 #000;
+        font-size: 20px;
+        margin: 0 auto 14px;
+    }
+
+    .mainbanner .bannertexts .eligiblespan {
+        border-radius: 68.505px;
+        border: 2px solid #000;
+        font-size: 10px;
+        padding: 10px;
+    }
+
+    .bannermodal .modal-dialog {
+        max-width: 415px;
+        margin: 0 auto;
+        padding: 0 25px;
+    }
+
+    .bannermodal .modal-dialog .modal-content {
+        border-radius: 20px;
+        border: 2px solid #000;
+        height: 315px;
+    }
+
+    .mainbanner .rightman {
+        width: 394.421px;
+        height: 323.146px;
+        bottom: 66px;
+        right: -200px;
+    }
+
+    .mainbanner .rightman .innertexts {
+        gap: 5px;
+        top: 54px;
+        left: 22px;
+    }
+
+    .mainbanner .rightman .innertexts .numbers {
+        font-size: 18px;
+    }
+
+    .mainbanner .rightman .innertexts .mintedhead {
+        font-size: 40px;
+    }
+
+    .bannermodal .modal-dialog .modal-content .modal-body .closebtn {
+        width: 40px;
+        height: 40px;
+        padding: 0 12.754px;
+        border-radius: 20.29px;
+        border: 2.899px solid #000;
+        background: #FFF;
+        box-shadow: 0 0 0 0 #000;
+        top: -25px;
+        right: -25px;
+
+        svg {
+            width: 27.826px;
+            height: 27.826px;
+        }
+    }
+
+    .bannermodal .modal-dialog .modal-content .modal-body .modalimg {
+        border-radius: 20px;
+    }
+
+    .bannermodal .modal-dialog .modal-content .modal-body .modaltexts {
+        width: 211px;
+        margin-top: 43px !important;
+        margin-right: 5px;
+    }
+
+    .bannermodal .modal-dialog .modal-content .modal-body .modaltexts .modalhead {
+        font-size: 22px;
+        margin-bottom: 17px;
+    }
+
+    .bannermodal .modal-dialog .modal-content .modal-body .modaltexts .modalpara {
+        margin-bottom: 17px;
+        font-size: 12px;
+    }
+
+    .bannermodal .modal-dialog .modal-content .modal-body .modaltexts .modalbtns {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .bannermodal .modal-dialog .modal-content .modal-body .modaltexts .modalbtns .innerbtn {
+        border-radius: 45.429px;
+        border: 2.839px solid #000;
+        width: 86px;
+        padding: 11.357px 20px;
+        font-size: 10px;
+        box-shadow: 0 4px 0 0 #000;
+    }
+}
