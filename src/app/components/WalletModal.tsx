@@ -1,47 +1,22 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { useConnect } from "wagmi";
-import "@/style/walletModal.scss"; 
+import "@/style/walletModal.scss";
 interface WalletModalProps {
   open: boolean;
   onClose: () => void;
 }
 
 const WALLET_LOGOS: Record<string, string> = {
-  MetaMask: "https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/metamask-icon.png",
-  WalletConnect: "https://images.seeklogo.com/logo-png/43/1/walletconnect-logo-png_seeklogo-430923.png",
-  
+  MetaMask:
+    "https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/metamask-icon.png",
+  WalletConnect:
+    "https://images.seeklogo.com/logo-png/43/1/walletconnect-logo-png_seeklogo-430923.png",
 };
 
 export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
-  const { connectors, connect, error } = useConnect();
+  const { connectors, connectAsync, error } = useConnect();
   const [loadingConnector, setLoadingConnector] = useState<string | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    },
-    [onClose]
-  );
-
-  useEffect(() => {
-    if (open) {
-      document.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden";
-    }
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
-    };
-  }, [open, handleKeyDown]);
-
-  useEffect(() => {
-    if (open) {
-      setConnectionError(null);
-    }
-  }, [open]);
 
   const handleConnect = async (connector: any) => {
     if (loadingConnector) return;
@@ -50,7 +25,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
     setConnectionError(null);
 
     try {
-      await connect({ connector });
+      await connectAsync({ connector });
       onClose();
     } catch (err) {
       console.error("Wallet connection failed:", err);
@@ -74,10 +49,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
       aria-modal="true"
       aria-labelledby="wallet-modal-title"
     >
-      <div
-        className="wallet-modal"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="wallet-modal" onClick={(e) => e.stopPropagation()}>
         <h2 id="wallet-modal-title" className="wallet-modal-title">
           Connect Wallet
         </h2>
@@ -88,7 +60,14 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
           </div>
         )}
 
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.75rem",
+          }}
+        >
           {connectors.map((connector) => {
             const isLoading = loadingConnector === connector.id;
             const logo = WALLET_LOGOS[connector.name];
@@ -123,7 +102,11 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
           })}
         </div>
 
-        <button onClick={onClose} className="wallet-cancel" aria-label="Cancel and close modal">
+        <button
+          onClick={onClose}
+          className="wallet-cancel"
+          aria-label="Cancel and close modal"
+        >
           Cancel
         </button>
       </div>
