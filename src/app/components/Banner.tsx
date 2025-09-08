@@ -79,7 +79,7 @@ const Banner: React.FC = () => {
             className="bannertabs"
           >
             <Tab eventKey="gtd" title="GTD">
-                      <h1 className="whitlisthead">GTD</h1>
+              <h1 className="whitlisthead">GTD</h1>
               {!connect && (
                 <>
                   <div className="maininput">
@@ -180,7 +180,7 @@ const Banner: React.FC = () => {
 
             <Tab eventKey="fcfs" title="FCFS">
               <h1 className="whitlisthead">FCFS</h1>
-                {!connect && (
+              {!connect && (
                 <>
                   <div className="maininput">
                     <button className="signbutton" onClick={decrease}>
@@ -381,17 +381,17 @@ const Banner: React.FC = () => {
         </div>
       </section>
 
-<DynamicModal
-  show={showSuccess}
-  onHide={handleCloseSuccess}
-  type="success"
-/>
+      <DynamicModal
+        show={showSuccess}
+        onHide={handleCloseSuccess}
+        type="success"
+      />
 
-<DynamicModal
-  show={showFailure}
-  onHide={handleCloseFailure}
-  type="failure"
-/>
+      <DynamicModal
+        show={showFailure}
+        onHide={handleCloseFailure}
+        type="failure"
+      />
     </>
   );
 };
