@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, {useState } from "react";
 import { useConnect } from "wagmi";
 import "@/style/walletModal.scss";
 interface WalletModalProps {
