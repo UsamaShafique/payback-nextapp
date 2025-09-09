@@ -5,10 +5,8 @@ import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
 import { MintNFTContract } from "../constants";
 
 export const useMintNFTContract = () => {
-  const address = MintNFTContract;
-
   const { data, isLoading, isError } = useReadContract({
-    address,
+    address: MintNFTContract,
     abi: mintNftsAbi,
     functionName: "currentPhase",
   });
@@ -16,6 +14,5 @@ export const useMintNFTContract = () => {
   if (data != null) {
     currentPhase = (data as any)?.toNumber?.() ?? Number(data);
   }
-
   return { currentPhase, isLoading, isError };
 };
