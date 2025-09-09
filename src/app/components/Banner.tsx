@@ -5,14 +5,21 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { WalletButton } from "./WalletButton";
+import { useMintNFTContract } from "../hooks/useReadContract";
+
 import { useAccount } from "wagmi";
 
 const Banner: React.FC = () => {
   const { isConnected } = useAccount();
+  const { phase, isLoading: phaseLoading } = useMintNFTContract();
 
-  const [key, setKey] = useState<string>("gtd");
+  let defaultTab = "";
+if (phase === 1) defaultTab = "gtd";
+else if (phase === 2) defaultTab = "fcfs";
+else if (phase === 3) defaultTab = "public";
+
+  const [key, setKey] = useState<string>(defaultTab);
   const [value, setValue] = useState<number | "">(1);
-
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const handleCloseSuccess = () => setShowSuccess(false);
   const handleShowSuccess = () => setShowSuccess(true);
@@ -39,9 +46,12 @@ const Banner: React.FC = () => {
       setValue(newValue === "" ? "" : parseInt(newValue, 10));
     }
   };
+  if (phaseLoading) return <p>Loading mint phase...</p>;
+
 
   return (
     <>
+
       <section className="mainbanner">
         {/* Background images */}
         <img
@@ -76,8 +86,8 @@ const Banner: React.FC = () => {
             onSelect={(k) => k && setKey(k)}
             className="bannertabs"
           >
-            <Tab eventKey="gtd" title="GTD">
-              <h1 className="whitlisthead">GTD</h1>
+<Tab eventKey="gtd" title="GTD" disabled={phase !== 1} >
+<h1 className="whitlisthead">GTD</h1>
               {!isConnected && (
                 <>
                   <div className="maininput">
@@ -167,7 +177,7 @@ const Banner: React.FC = () => {
               )}
             </Tab>
 
-            <Tab eventKey="fcfs" title="FCFS">
+            <Tab eventKey="fcfs" title="FCFS" disabled={phase !== 2} >
               <h1 className="whitlisthead">FCFS</h1>
               {!isConnected && (
                 <>
@@ -259,7 +269,8 @@ const Banner: React.FC = () => {
               )}
             </Tab>
 
-            <Tab eventKey="public" title="Public">
+            <Tab eventKey="public" title="Public" disabled={phase !== 3} >
+
               <h1 className="whitlisthead">Public</h1>
               {!isConnected && (
                 <>

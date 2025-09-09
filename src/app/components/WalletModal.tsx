@@ -1,24 +1,26 @@
-import React, {useState } from "react";
-import { useConnect } from "wagmi";
+import React, { useState } from "react";
+import { useConnect, useSignMessage, useDisconnect } from "wagmi";
+import { WalletLogo } from "./icons/WalletLogo";
 import "@/style/walletModal.scss";
 interface WalletModalProps {
   open: boolean;
   onClose: () => void;
+  onSigned: (signature: string) => void;
 }
 
-const WALLET_LOGOS: Record<string, string> = {
-  MetaMask:
-    "https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/metamask-icon.png",
-  WalletConnect:
-    "https://images.seeklogo.com/logo-png/43/1/walletconnect-logo-png_seeklogo-430923.png",
-};
-
-export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
+export const WalletModal: React.FC<WalletModalProps> = ({
+  open,
+  onClose,
+  onSigned,
+}) => {
   const { connectors, connectAsync, error } = useConnect();
+  const { signMessageAsync } = useSignMessage();
+  const { disconnect } = useDisconnect();
+
   const [loadingConnector, setLoadingConnector] = useState<string | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
-  const handleConnect = async (connector: any) => {
+  const handleConnect = async (connector: (typeof connectors)[number]) => {
     if (loadingConnector) return;
 
     setLoadingConnector(connector.id);
@@ -26,13 +28,16 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
 
     try {
       await connectAsync({ connector });
+      const signature = await signMessageAsync({
+        message: `Sign in at ${new Date().toISOString()}`,
+      });
+
       onClose();
+      onSigned(signature);
     } catch (err) {
-      console.error("Wallet connection failed:", err);
+      disconnect();
       setConnectionError(
-        err instanceof Error
-          ? err.message
-          : "Failed to connect wallet. Please try again."
+        err instanceof Error ? err.message : "Connection or signing failed"
       );
     } finally {
       setLoadingConnector(null);
@@ -70,7 +75,6 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
         >
           {connectors.map((connector) => {
             const isLoading = loadingConnector === connector.id;
-            const logo = WALLET_LOGOS[connector.name];
 
             return (
               <button
@@ -80,17 +84,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
                 className="wallet-option"
                 aria-label={`Connect ${connector.name} wallet`}
               >
-                {logo ? (
-                  <img
-                    src={logo}
-                    alt={`${connector.name} logo`}
-                    className="wallet-logo"
-                  />
-                ) : (
-                  <div className="wallet-icon-placeholder">
-                    {connector.name.charAt(0)}
-                  </div>
-                )}
+                <WalletLogo name={connector.name} />
 
                 <span style={{ flex: 1 }}>
                   {isLoading ? "Connecting..." : connector.name}

@@ -1,9 +1,9 @@
-import { useAccount  } from "wagmi";
+import { useAccount } from "wagmi";
 import { useState } from "react";
 import { WalletModal } from "./WalletModal";
 
 interface WalletButtonProps {
-  className?: string; // allows custom styling
+  className?: string;
 }
 
 export const WalletButton: React.FC<WalletButtonProps> = ({ className }) => {
@@ -21,7 +21,11 @@ export const WalletButton: React.FC<WalletButtonProps> = ({ className }) => {
         </button>
       )}
 
-      <WalletModal open={open} onClose={() => setOpen(false)} />
+      <WalletModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSigned={(sig) => console.log("Wallet connected with signature:", sig)}
+      />
     </>
   );
 };
