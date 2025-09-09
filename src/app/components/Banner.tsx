@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, ChangeEvent } from "react";
 import "../styles/banner.scss";
 import { Modal } from "react-bootstrap";
@@ -5,14 +7,19 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { WalletButton } from "./WalletButton";
+import { useMintNFTContract } from "../hooks/useReadContract";
+
 import { useAccount } from "wagmi";
+import { PHASE_MAP, PHASES } from "../constants";
 
 const Banner: React.FC = () => {
   const { isConnected } = useAccount();
+  const { currentPhase, isLoading: currentPhaseLoading } = useMintNFTContract();
 
-  const [key, setKey] = useState<string>("gtd");
+  const defaultTab = PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? "og";
+
+  const [key, setKey] = useState<string>(defaultTab);
   const [value, setValue] = useState<number | "">(1);
-
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const handleCloseSuccess = () => setShowSuccess(false);
   const handleShowSuccess = () => setShowSuccess(true);
@@ -39,6 +46,7 @@ const Banner: React.FC = () => {
       setValue(newValue === "" ? "" : parseInt(newValue, 10));
     }
   };
+  if (currentPhaseLoading) return <p>Loading mint phase...</p>;
 
   return (
     <>
@@ -76,8 +84,8 @@ const Banner: React.FC = () => {
             onSelect={(k) => k && setKey(k)}
             className="bannertabs"
           >
-            <Tab eventKey="gtd" title="GTD">
-              <h1 className="whitlisthead">GTD</h1>
+            <Tab eventKey="gtd" title={PHASES?.GTD?.toUpperCase()}>
+              <h1 className="whitlisthead">{PHASES?.GTD?.toUpperCase()}</h1>
               {!isConnected && (
                 <>
                   <div className="maininput">
@@ -167,8 +175,8 @@ const Banner: React.FC = () => {
               )}
             </Tab>
 
-            <Tab eventKey="fcfs" title="FCFS">
-              <h1 className="whitlisthead">FCFS</h1>
+            <Tab eventKey="fcfs" title={PHASES?.FCFS.toUpperCase()}>
+              <h1 className="whitlisthead">{PHASES?.FCFS?.toUpperCase()}</h1>
               {!isConnected && (
                 <>
                   <div className="maininput">
@@ -259,8 +267,8 @@ const Banner: React.FC = () => {
               )}
             </Tab>
 
-            <Tab eventKey="public" title="Public">
-              <h1 className="whitlisthead">Public</h1>
+            <Tab eventKey="public" title={PHASES?.PUBLIC.toUpperCase()}>
+              <h1 className="whitlisthead">{PHASES?.PUBLIC?.toUpperCase()}</h1>
               {!isConnected && (
                 <>
                   <div className="maininput">
