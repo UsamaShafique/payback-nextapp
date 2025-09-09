@@ -10,9 +10,6 @@ export const useMintNFTContract = () => {
     abi: mintNftsAbi,
     functionName: "currentPhase",
   });
-  let currentPhase: number | undefined;
-  if (data != null) {
-    currentPhase = (data as any)?.toNumber?.() ?? Number(data);
-  }
+  const currentPhase = data ? Number(data) : 0;
   return { currentPhase, isLoading, isError };
 };
