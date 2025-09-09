@@ -2,10 +2,10 @@
 
 import { useReadContract } from "wagmi";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
-import { CONTRACT_ADDRESSES } from "../constants";
+import { MintNFTContract } from "../constants";
 
 export const useMintNFTContract = () => {
-  const address = CONTRACT_ADDRESSES.MintNFTContract;
+  const address = MintNFTContract;
 
   const { data, isLoading, isError } = useReadContract({
     address,
