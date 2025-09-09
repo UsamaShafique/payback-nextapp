@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useSignMessage } from 'wagmi';
+import { useState } from "react";
+import { useSignMessage } from "wagmi";
 
 export const useSign = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,11 +20,10 @@ export const useSign = () => {
     try {
       setError(null);
       const signature = await signMessageAsync({ message });
-      console.log('Signed:', signature);
       setIsOpen(false);
       return signature;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to sign');
+      setError(err instanceof Error ? err.message : "Failed to sign");
     }
   };
 

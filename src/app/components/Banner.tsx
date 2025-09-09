@@ -14,9 +14,9 @@ const Banner: React.FC = () => {
   const { phase, isLoading: phaseLoading } = useMintNFTContract();
 
   let defaultTab = "";
-if (phase === 1) defaultTab = "gtd";
-else if (phase === 2) defaultTab = "fcfs";
-else if (phase === 3) defaultTab = "public";
+  if (phase === 1) defaultTab = "gtd";
+  else if (phase === 2) defaultTab = "fcfs";
+  else if (phase === 3) defaultTab = "public";
 
   const [key, setKey] = useState<string>(defaultTab);
   const [value, setValue] = useState<number | "">(1);
@@ -48,10 +48,8 @@ else if (phase === 3) defaultTab = "public";
   };
   if (phaseLoading) return <p>Loading mint phase...</p>;
 
-
   return (
     <>
-
       <section className="mainbanner">
         {/* Background images */}
         <img
@@ -86,8 +84,8 @@ else if (phase === 3) defaultTab = "public";
             onSelect={(k) => k && setKey(k)}
             className="bannertabs"
           >
-<Tab eventKey="gtd" title="GTD" disabled={phase !== 1} >
-<h1 className="whitlisthead">GTD</h1>
+            <Tab eventKey="gtd" title="GTD" disabled={phase !== 1}>
+              <h1 className="whitlisthead">GTD</h1>
               {!isConnected && (
                 <>
                   <div className="maininput">
@@ -177,7 +175,7 @@ else if (phase === 3) defaultTab = "public";
               )}
             </Tab>
 
-            <Tab eventKey="fcfs" title="FCFS" disabled={phase !== 2} >
+            <Tab eventKey="fcfs" title="FCFS" disabled={phase !== 2}>
               <h1 className="whitlisthead">FCFS</h1>
               {!isConnected && (
                 <>
@@ -269,8 +267,7 @@ else if (phase === 3) defaultTab = "public";
               )}
             </Tab>
 
-            <Tab eventKey="public" title="Public" disabled={phase !== 3} >
-
+            <Tab eventKey="public" title="Public" disabled={phase !== 3}>
               <h1 className="whitlisthead">Public</h1>
               {!isConnected && (
                 <>
