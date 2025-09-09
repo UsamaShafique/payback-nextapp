@@ -24,7 +24,6 @@ export const WalletButton: React.FC<WalletButtonProps> = ({ className }) => {
       <WalletModal
         open={open}
         onClose={() => setOpen(false)}
-        onSigned={(sig) => console.log("Wallet connected with signature:", sig)}
       />
     </>
   );

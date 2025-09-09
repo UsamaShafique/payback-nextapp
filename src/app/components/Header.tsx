@@ -11,7 +11,7 @@ import {
 } from "./icons/headericons";
 
 const Header: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const { isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 

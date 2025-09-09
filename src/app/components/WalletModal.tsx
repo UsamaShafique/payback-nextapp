@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import { useConnect, useSignMessage, useDisconnect } from "wagmi";
+import { useConnect } from "wagmi";
 import { WalletLogo } from "./icons/WalletLogo";
-import "@/style/walletModal.scss";
+import "../styles/walletModal.scss";
 interface WalletModalProps {
   open: boolean;
   onClose: () => void;
-  onSigned: (signature: string) => void;
 }
 
 export const WalletModal: React.FC<WalletModalProps> = ({
   open,
   onClose,
-  onSigned,
 }) => {
   const { connectors, connectAsync, error } = useConnect();
-  const { signMessageAsync } = useSignMessage();
-  const { disconnect } = useDisconnect();
 
   const [loadingConnector, setLoadingConnector] = useState<string | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -28,14 +24,8 @@ export const WalletModal: React.FC<WalletModalProps> = ({
 
     try {
       await connectAsync({ connector });
-      const signature = await signMessageAsync({
-        message: `Sign in at ${new Date().toISOString()}`,
-      });
-
       onClose();
-      onSigned(signature);
     } catch (err) {
-      disconnect();
       setConnectionError(
         err instanceof Error ? err.message : "Connection or signing failed"
       );
