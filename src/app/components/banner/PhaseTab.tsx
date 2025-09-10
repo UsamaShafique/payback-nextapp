@@ -11,9 +11,9 @@ interface PhaseTabProps {
   onValueChange: (val: number | "") => void;
   onMint: () => void;
   isEligible?: boolean;
-  startTime?: string; 
-  timeRemaining?: string; 
-  price?: number; 
+  startTime?: string;
+  timeRemaining?: string;
+  price?: number;
 }
 
 const PhaseTab: React.FC<PhaseTabProps> = ({
@@ -31,42 +31,41 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
 
   return (
     <div className="phasetab-container">
-    <h1 className="whitlisthead">{title.toUpperCase()}</h1>
-  
-    {/* Always show input */}
-    <CounterInput value={value} onChange={onValueChange} />
-    <div className="details">
-      <p className="detailpara">Price: {price} ETH</p>
-      <p className="detailpara">Total: {total.toFixed(3)} ETH</p>
-    </div>
-  
-    <div className="maingtd">
-      <div className="innergtd">
-        <p className="gtdpara">Start time</p>
-        <h6 className="gtdhead">{startTime}</h6>
+      <h1 className="whitlisthead">{title.toUpperCase()}</h1>
+
+      {/* Always show input */}
+      <CounterInput value={value} onChange={onValueChange} />
+      <div className="details">
+        <p className="detailpara">Price: {price} ETH</p>
+        <p className="detailpara">Total: {total.toFixed(3)} ETH</p>
       </div>
-      <div className="innergtd">
-        <p className="gtdpara">Time remaining</p>
-        <h6 className="gtdhead">{timeRemaining}</h6>
+
+      <div className="maingtd">
+        <div className="innergtd">
+          <p className="gtdpara">Start time</p>
+          <h6 className="gtdhead">{startTime}</h6>
+        </div>
+        <div className="innergtd">
+          <p className="gtdpara">Time remaining</p>
+          <h6 className="gtdhead">{timeRemaining}</h6>
+        </div>
       </div>
+
+      {isConnected ? (
+        <>
+          <p className="publicpara">
+            {isEligible
+              ? "You are eligible to Mint NFT"
+              : "You are not eligible to Mint NFT"}
+          </p>
+          <button className="mintbtn" onClick={onMint} disabled={!isEligible}>
+            Mint now
+          </button>
+        </>
+      ) : (
+        <WalletButton className="connectbtn" />
+      )}
     </div>
-  
-    {isConnected ? (
-      <>
-        <p className="publicpara">
-          {isEligible
-            ? "You are eligible to Mint NFT"
-            : "You are not eligible to Mint NFT"}
-        </p>
-        <button className="mintbtn" onClick={onMint} disabled={!isEligible}>
-          Mint now
-        </button>
-      </>
-    ) : (
-      <WalletButton className="connectbtn" />
-    )}
-  </div>
-  
   );
 };
 

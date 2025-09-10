@@ -1,63 +1,108 @@
+// "use client";
+
+// import { useWriteContract } from "wagmi";
+// import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
+// import { MintNFTContract, PHASES, CONTRACT_FUNCTIONS } from "../constants";
+
+// export type Phase = (typeof PHASES)[keyof typeof PHASES]; // "gtd" | "fcfs" | "public"
+
+// export const useMintNFTWrite = () => {
+//   const { writeContractAsync, isPending, error } = useWriteContract();
+
+//   const presaleMint = async (
+//     phase: Phase,
+//     quantity: number,
+//     merkleProof: string[]
+//   ) => {
+//     if (!merkleProof?.length) {
+//       throw new Error("Merkle proof is required.");
+//     }
+
+//     return await writeContractAsync({
+//       address: MintNFTContract,
+//       abi: mintNftsAbi,
+//       functionName: CONTRACT_FUNCTIONS.PRESALE_MINT, 
+//       args: [quantity, merkleProof],
+//     });
+//   };
+
+//   const publicMint = async (quantity: number) => {
+//     return await writeContractAsync({
+//       address: MintNFTContract,
+//       abi: mintNftsAbi,
+//       functionName: CONTRACT_FUNCTIONS.PUBLIC_MINT, 
+//       args: [quantity],
+//     });
+//   };
+
+//   return {
+//     presaleMint,
+//     publicMint,
+//     isPending,
+//     error,
+//   };
+// };
+
 "use client";
 
-import { useWriteContract } from "wagmi";
+import { useAccount, useWriteContract } from "wagmi";
+import { simulateContract, waitForTransactionReceipt } from "@wagmi/core";
+import { config } from "../../wagmi";
+import { MintNFTContract, CONTRACT_FUNCTIONS } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
-import { MintNFTContract } from "../constants";
 
-// Types
-type ProofsMap = Record<string, { proof: string[] }>;
-type Phase = "gtd" | "fcfs";
-
-// JSON Proofs (cast to ProofsMap so TS knows we can index with string addresses)
-import rawProofsGTD from "../utils/Proofs-GTD.json";
-import rawProofsFCFS from "../utils/Proofs-FCFS.json";
-
-const proofsGTD = rawProofsGTD as ProofsMap;
-const proofsFCFS = rawProofsFCFS as ProofsMap;
-
-export const useMintNFTWrite = (walletAddress?: string) => {
+export const useMintNFTWrite = () => {
   const { writeContractAsync, isPending, error } = useWriteContract();
+  const { isConnected, address } = useAccount();
 
-  const addressKey = walletAddress?.toLowerCase();
-
-  // ---------- Presale Mint (GTD, FCFS) ----------
-  const presaleMint = async (phase: Phase, quantity: number) => {
-    const proofs = phase === "gtd" ? proofsGTD : proofsFCFS;
-    const proof = addressKey && proofs[addressKey]?.proof;
-
-    if (!proof) {
-      throw new Error("Wallet not eligible for presale minting.");
+  const ensureConnected = () => {
+    if (!isConnected || !address) {
+      throw new Error("Wallet not connected. Please connect your wallet first.");
     }
+  };
 
-    return await writeContractAsync({
+  // ---------- Presale Mint ----------
+  const presaleMint = async (
+    _phase: "gtd" | "fcfs" | "public",
+    quantity: number,
+    merkleProof: string[]
+  ) => {
+    ensureConnected();
+
+    // Simulate
+    const { request } = await simulateContract(config, {
       address: MintNFTContract,
       abi: mintNftsAbi,
-      functionName: "presaleMint",
-      args: [quantity, proof],
+      functionName: CONTRACT_FUNCTIONS.PRESALE_MINT,
+      args: [quantity, merkleProof],
+      account: address,
     });
+
+    const txHash = await writeContractAsync(request);
+
+    const receipt = await waitForTransactionReceipt(config, { hash: txHash });
+
+    return receipt; // 👈 confirmed transaction
   };
 
   // ---------- Public Mint ----------
   const publicMint = async (quantity: number) => {
-    return await writeContractAsync({
+    ensureConnected();
+
+    const { request } = await simulateContract(config, {
       address: MintNFTContract,
       abi: mintNftsAbi,
-      functionName: "publicMint", // ✅ confirm with ABI
+      functionName: CONTRACT_FUNCTIONS.PUBLIC_MINT,
       args: [quantity],
+      account: address,
     });
+
+    const txHash = await writeContractAsync(request);
+
+    const receipt = await waitForTransactionReceipt(config, { hash: txHash });
+
+    return receipt;
   };
 
-  // ---------- Eligibility Check ----------
-  const checkEligibility = (phase: Phase): boolean => {
-    const proofs = phase === "gtd" ? proofsGTD : proofsFCFS;
-    return Boolean(addressKey && proofs[addressKey]);
-  };
-
-  return {
-    presaleMint,
-    publicMint,
-    checkEligibility,
-    isPending,
-    error,
-  };
+  return { presaleMint, publicMint, isPending, error };
 };

@@ -5,11 +5,11 @@ import "../styles/banner.scss";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
-import { WalletButton } from "./WalletButton";
 import { useMintNFT, useNftSupply } from "../hooks/useReadContract";
 import { useAccount } from "wagmi";
 import { PHASES, PHASE_MAP } from "../constants";
 import PhaseTab from "./banner/PhaseTab";
+import { useMintNFTWrite } from "../hooks/useMintNFTWrite";
 
 import proofsGTDJson from "../utils/Proofs-GTD.json";
 import proofsFCFSJson from "../utils/Proofs-FCFS.json";
@@ -23,32 +23,35 @@ const Banner: React.FC = () => {
 
   const [activeKey, setActiveKey] = useState<string | undefined>(undefined);
   const [value, setValue] = useState<number | "">(1);
-  const [eligibilityMap, setEligibilityMap] = useState<Record<string, boolean>>({});
+  const [eligibilityMap, setEligibilityMap] = useState<Record<string, boolean>>(
+    {}
+  );
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
+
+  const { presaleMint, publicMint, isPending } = useMintNFTWrite();
 
   const proofsGTD = Object.fromEntries(
     Object.entries(proofsGTDJson).map(([k, v]) => [k.toLowerCase(), v])
   ) as ProofsType;
-  
+
   const proofsFCFS = Object.fromEntries(
     Object.entries(proofsFCFSJson).map(([k, v]) => [k.toLowerCase(), v])
   ) as ProofsType;
-  
 
-  // Set active tab based on currentPhase
   useEffect(() => {
-    setActiveKey(PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? undefined);
+    setActiveKey(
+      PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? undefined
+    );
   }, [currentPhase]);
 
-  // Compute eligibility per tab
   useEffect(() => {
     const lowerAddr = address?.toLowerCase() ?? "";
     if (!isConnected || !address) {
       setEligibilityMap({});
       return;
     }
-console.log(lowerAddr ,"addresss")
+
     setEligibilityMap({
       [PHASES.GTD]: Boolean(proofsGTD[lowerAddr]),
       [PHASES.FCFS]: Boolean(proofsFCFS[lowerAddr]),
@@ -56,9 +59,44 @@ console.log(lowerAddr ,"addresss")
     });
   }, [address, isConnected]);
 
+  const handleMint = async () => {
+    if (!address || !isConnected || !activeKey) return;
+
+    try {
+      const quantity = value || 1;
+      let receipt;
+
+      if (activeKey === PHASES.GTD) {
+        const proof = proofsGTD[address.toLowerCase()]?.proof ?? [];
+        if (proof.length === 0) {
+          console.log(`Wallet not eligible for ${PHASES.GTD} phase`);
+          return;
+        }
+        receipt = await presaleMint(PHASES.GTD, quantity, proof);
+      } else if (activeKey === PHASES.FCFS) {
+        const proof = proofsFCFS[address.toLowerCase()]?.proof ?? [];
+        if (proof.length === 0) {
+          console.log(`Wallet not eligible for ${PHASES.FCFS} phase`);
+          return;
+        }
+        receipt = await presaleMint(PHASES.FCFS, quantity, proof);
+      } else if (activeKey === PHASES.PUBLIC) {
+        receipt = await publicMint(quantity);
+      }
+
+      if (receipt?.status === "success") {
+        setShowSuccess(true);
+      } else {
+        setShowFailure(true);
+      }
+    } catch (err) {
+      console.error(err);
+      setShowFailure(true);
+    }
+  };
+
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
 
-  
   return (
     <>
       <section className="mainbanner">
@@ -101,7 +139,7 @@ console.log(lowerAddr ,"addresss")
                   isConnected={isConnected}
                   value={value}
                   onValueChange={setValue}
-                  onMint={() => setShowSuccess(true)}
+                  onMint={handleMint}
                   isEligible={eligibilityMap[label] ?? false}
                   price={0.03}
                   startTime="TBD"
