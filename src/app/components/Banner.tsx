@@ -2,33 +2,63 @@
 
 import React, { useState, useEffect } from "react";
 import "../styles/banner.scss";
-import { Modal } from "react-bootstrap";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { WalletButton } from "./WalletButton";
 import { useMintNFT, useNftSupply } from "../hooks/useReadContract";
-
 import { useAccount } from "wagmi";
 import { PHASES, PHASE_MAP } from "../constants";
 import PhaseTab from "./banner/PhaseTab";
 
+import proofsGTDJson from "../utils/Proofs-GTD.json";
+import proofsFCFSJson from "../utils/Proofs-FCFS.json";
+
+type ProofsType = Record<string, { proof: string[] }>;
+
 const Banner: React.FC = () => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { currentPhase, currentPhaseLoading } = useMintNFT();
   const { totalSupply, maxSupply } = useNftSupply();
+
   const [activeKey, setActiveKey] = useState<string | undefined>(undefined);
   const [value, setValue] = useState<number | "">(1);
-  const [showSuccess, setShowSuccess] = useState<boolean>(false);
-  const [showFailure, setShowFailure] = useState<boolean>(false);
+  const [eligibilityMap, setEligibilityMap] = useState<Record<string, boolean>>({});
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showFailure, setShowFailure] = useState(false);
 
+  const proofsGTD = Object.fromEntries(
+    Object.entries(proofsGTDJson).map(([k, v]) => [k.toLowerCase(), v])
+  ) as ProofsType;
+  
+  const proofsFCFS = Object.fromEntries(
+    Object.entries(proofsFCFSJson).map(([k, v]) => [k.toLowerCase(), v])
+  ) as ProofsType;
+  
+
+  // Set active tab based on currentPhase
   useEffect(() => {
     setActiveKey(PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? undefined);
   }, [currentPhase]);
-  
+
+  // Compute eligibility per tab
+  useEffect(() => {
+    const lowerAddr = address?.toLowerCase() ?? "";
+    if (!isConnected || !address) {
+      setEligibilityMap({});
+      return;
+    }
+console.log(lowerAddr ,"addresss")
+    setEligibilityMap({
+      [PHASES.GTD]: Boolean(proofsGTD[lowerAddr]),
+      [PHASES.FCFS]: Boolean(proofsFCFS[lowerAddr]),
+      [PHASES.PUBLIC]: true,
+    });
+  }, [address, isConnected]);
 
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
 
+  
   return (
     <>
       <section className="mainbanner">
@@ -60,7 +90,7 @@ const Banner: React.FC = () => {
         <div className="bannertexts">
           <Tabs
             id="mint-tabs"
-            activeKey={activeKey} // can be undefined if no tab should be active
+            activeKey={activeKey}
             onSelect={(k) => k && setActiveKey(k)}
             className="bannertabs"
           >
@@ -72,6 +102,10 @@ const Banner: React.FC = () => {
                   value={value}
                   onValueChange={setValue}
                   onMint={() => setShowSuccess(true)}
+                  isEligible={eligibilityMap[label] ?? false}
+                  price={0.03}
+                  startTime="TBD"
+                  timeRemaining="TBD"
                 />
               </Tab>
             ))}

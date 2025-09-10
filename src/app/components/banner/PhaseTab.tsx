@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import CounterInput from "../banner/CounterInput";
 import { WalletButton } from "../../components/WalletButton";
@@ -9,6 +10,10 @@ interface PhaseTabProps {
   value: number | "";
   onValueChange: (val: number | "") => void;
   onMint: () => void;
+  isEligible?: boolean;
+  startTime?: string; 
+  timeRemaining?: string; 
+  price?: number; 
 }
 
 const PhaseTab: React.FC<PhaseTabProps> = ({
@@ -17,47 +22,52 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
   value,
   onValueChange,
   onMint,
-}) => (
-  <div>
+  isEligible = false,
+  startTime = "TBD",
+  timeRemaining = "TBD",
+  price = 0.03,
+}) => {
+  const total = typeof value === "number" ? value * price : 0;
+
+  return (
+    <div className="phasetab-container">
     <h1 className="whitlisthead">{title.toUpperCase()}</h1>
-
-    {!isConnected && (
-      <>
-        <CounterInput value={value} onChange={onValueChange} />
-        <div className="details">
-          <p className="detailpara">Price: 0.03 ETH</p>
-          <p className="detailpara">Total: 0.03 ETH</p>
-        </div>
-      </>
-    )}
-
+  
+    {/* Always show input */}
+    <CounterInput value={value} onChange={onValueChange} />
+    <div className="details">
+      <p className="detailpara">Price: {price} ETH</p>
+      <p className="detailpara">Total: {total.toFixed(3)} ETH</p>
+    </div>
+  
     <div className="maingtd">
       <div className="innergtd">
         <p className="gtdpara">Start time</p>
-        <h6 className="gtdhead">
-          {!isConnected && <span>27th Aug</span>}
-          14:18:13
-          {!isConnected && <span>EST</span>}
-        </h6>
+        <h6 className="gtdhead">{startTime}</h6>
       </div>
       <div className="innergtd">
         <p className="gtdpara">Time remaining</p>
-        <h6 className="gtdhead">TBD</h6>
+        <h6 className="gtdhead">{timeRemaining}</h6>
       </div>
     </div>
-
+  
     {isConnected ? (
       <>
-        <p className="publicpara">public mint starts in 2 days</p>
-        <button className="mintbtn" onClick={onMint}>
+        <p className="publicpara">
+          {isEligible
+            ? "You are eligible to Mint NFT"
+            : "You are not eligible to Mint NFT"}
+        </p>
+        <button className="mintbtn" onClick={onMint} disabled={!isEligible}>
           Mint now
         </button>
-        <span className="eligiblespan">You are eligible to Mint NFT</span>
       </>
     ) : (
       <WalletButton className="connectbtn" />
     )}
   </div>
-);
+  
+  );
+};
 
 export default PhaseTab;
