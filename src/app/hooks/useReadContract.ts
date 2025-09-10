@@ -2,14 +2,33 @@
 
 import { useReadContract } from "wagmi";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
-import { MintNFTContract } from "../constants";
+import { MintNFTContract, CONTRACT_FUNCTIONS } from "../constants";
 
-export const useMintNFTContract = () => {
-  const { data, isLoading, isError } = useReadContract({
+export const useMintNFT = () => {
+  const { data: phaseData, isLoading: currentPhaseLoading, isError: isPhaseError } =
+    useReadContract({
+      address: MintNFTContract,
+      abi: mintNftsAbi,
+      functionName: CONTRACT_FUNCTIONS.CURRENT_PHASE,
+    });
+
+  const { data: totalSupplyData } = useReadContract({
     address: MintNFTContract,
     abi: mintNftsAbi,
-    functionName: "currentPhase",
+    functionName: CONTRACT_FUNCTIONS.TOTAL_SUPPLY,
   });
-  const currentPhase = data ? Number(data) : 0;
-  return { currentPhase, isLoading, isError };
+
+  const { data: maxSupplyData } = useReadContract({
+    address: MintNFTContract,
+    abi: mintNftsAbi,
+    functionName: CONTRACT_FUNCTIONS.MAX_SUPPLY,
+  });
+
+  return {
+    currentPhase: phaseData ? Number(phaseData) : 0,
+    totalSupply: totalSupplyData ? Number(totalSupplyData) : 0,
+    maxSupply: maxSupplyData ? Number(maxSupplyData) : 0,
+    currentPhaseLoading,
+    isPhaseError,
+  };
 };

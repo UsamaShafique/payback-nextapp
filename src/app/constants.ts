@@ -1,4 +1,4 @@
-export const  MintNFTContract:`0x${string}`= "0x22894A46E759694Ed97EE911a76BB63b1DE3d9A6";
+export const MintNFTContract: `0x${string}` = "0x2F911C42812e92F4ab70a39eCc6f69197b2602f1";
 
 export interface IPhases {
   GTD: "gtd";
@@ -17,3 +17,9 @@ export const PHASE_MAP = {
   2: PHASES.FCFS,
   3: PHASES.PUBLIC,
 };
+
+export const CONTRACT_FUNCTIONS = {
+  CURRENT_PHASE: "currentPhase",
+  TOTAL_SUPPLY: "totalSupply",
+  MAX_SUPPLY: "MAX_SUPPLY",
+} as const;

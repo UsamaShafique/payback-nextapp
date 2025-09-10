@@ -7,14 +7,14 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { WalletButton } from "./WalletButton";
-import { useMintNFTContract } from "../hooks/useReadContract";
+import {  useMintNFT } from "../hooks/useReadContract";
 
 import { useAccount } from "wagmi";
 import { PHASE_MAP, PHASES } from "../constants";
 
 const Banner: React.FC = () => {
   const { isConnected } = useAccount();
-  const { currentPhase, isLoading: currentPhaseLoading } = useMintNFTContract();
+  const { currentPhase, totalSupply, maxSupply, currentPhaseLoading } = useMintNFT();
 
   const defaultTab = PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? "og";
 
@@ -48,6 +48,7 @@ const Banner: React.FC = () => {
   };
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
 
+
   return (
     <>
       <section className="mainbanner">
@@ -66,7 +67,7 @@ const Banner: React.FC = () => {
         {/* Right side */}
         <div className="rightman">
           <div className="innertexts">
-            <h6 className="numbers">1023/3000</h6>
+            <h6 className="numbers">{totalSupply}/{maxSupply}</h6>
             <h1 className="mintedhead">Minted</h1>
           </div>
           <img
