@@ -11,7 +11,13 @@ export const useMintNFT = () => {
       abi: mintNftsAbi,
       functionName: CONTRACT_FUNCTIONS.CURRENT_PHASE,
     });
-
+  return {
+    currentPhase: phaseData ? Number(phaseData) : 0,
+    currentPhaseLoading,
+    isPhaseError,
+  };
+};
+export const useNftSupply = () => {
   const { data: totalSupplyData } = useReadContract({
     address: MintNFTContract,
     abi: mintNftsAbi,
@@ -25,10 +31,7 @@ export const useMintNFT = () => {
   });
 
   return {
-    currentPhase: phaseData ? Number(phaseData) : 0,
     totalSupply: totalSupplyData ? Number(totalSupplyData) : 0,
     maxSupply: maxSupplyData ? Number(maxSupplyData) : 0,
-    currentPhaseLoading,
-    isPhaseError,
   };
-};
+}

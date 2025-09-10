@@ -7,23 +7,21 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { WalletButton } from "./WalletButton";
-import {  useMintNFT } from "../hooks/useReadContract";
+import {  useMintNFT, useNftSupply } from "../hooks/useReadContract";
 
 import { useAccount } from "wagmi";
 import { PHASE_MAP, PHASES } from "../constants";
 
 const Banner: React.FC = () => {
   const { isConnected } = useAccount();
-  const { currentPhase, totalSupply, maxSupply, currentPhaseLoading } = useMintNFT();
-
+  const { currentPhase, currentPhaseLoading } = useMintNFT();
+  const { totalSupply, maxSupply } = useNftSupply();
   const defaultTab = PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? "og";
-
   const [key, setKey] = useState<string>(defaultTab);
   const [value, setValue] = useState<number | "">(1);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const handleCloseSuccess = () => setShowSuccess(false);
   const handleShowSuccess = () => setShowSuccess(true);
-
   const [showFailure, setShowFailure] = useState<boolean>(false);
   const handleCloseFailure = () => setShowFailure(false);
   const handleShowFailure = () => setShowFailure(true);
