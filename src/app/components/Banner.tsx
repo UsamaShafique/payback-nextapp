@@ -7,7 +7,7 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { WalletButton } from "./WalletButton";
-import {  useMintNFT, useNftSupply } from "../hooks/useReadContract";
+import { useMintNFT, useNftSupply } from "../hooks/useReadContract";
 
 import { useAccount } from "wagmi";
 import { PHASES, PHASE_MAP } from "../constants";
@@ -17,46 +17,55 @@ const Banner: React.FC = () => {
   const { isConnected } = useAccount();
   const { currentPhase, currentPhaseLoading } = useMintNFT();
   const { totalSupply, maxSupply } = useNftSupply();
-  const defaultTab = PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? "og";
-  const [activeKey, setActiveKey] = useState<string>("og");
+  const [activeKey, setActiveKey] = useState<string | undefined>(undefined);
   const [value, setValue] = useState<number | "">(1);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
-  const handleCloseSuccess = () => setShowSuccess(false);
-  const handleShowSuccess = () => setShowSuccess(true);
   const [showFailure, setShowFailure] = useState<boolean>(false);
 
   useEffect(() => {
-    if (currentPhase) {
-      setActiveKey(PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? "og");
-    }
+    setActiveKey(PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? undefined);
   }, [currentPhase]);
+  
 
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
-
 
   return (
     <>
       <section className="mainbanner">
-        <img src="/assets/bannerbg.png" alt="bannerbg" className="bannerbg d-noneformobile" />
-        <img src="/assets/bannerbgmbl.png" alt="bannerbg" className="bannerbg d-none d-blockformobile" />
+        <img
+          src="/assets/bannerbg.png"
+          alt="bannerbg"
+          className="bannerbg d-noneformobile"
+        />
+        <img
+          src="/assets/bannerbgmbl.png"
+          alt="bannerbg"
+          className="bannerbg d-none d-blockformobile"
+        />
 
         <div className="rightman">
           <div className="innertexts">
-            <h6 className="numbers">{totalSupply}/{maxSupply}</h6>
+            <h6 className="numbers">
+              {totalSupply}/{maxSupply}
+            </h6>
             <h1 className="mintedhead">Minted</h1>
           </div>
-          <img src="/assets/rightman.png" alt="rightmanimg" className="rightmanimg" />
+          <img
+            src="/assets/rightman.png"
+            alt="rightmanimg"
+            className="rightmanimg"
+          />
         </div>
 
         <div className="bannertexts">
           <Tabs
             id="mint-tabs"
-            activeKey={activeKey}
+            activeKey={activeKey} // can be undefined if no tab should be active
             onSelect={(k) => k && setActiveKey(k)}
             className="bannertabs"
           >
-            {Object.entries(PHASES).map(([key, label]) => (
-              <Tab key={key} eventKey={key} title={label.toUpperCase()}>
+            {Object.entries(PHASES).map(([_, label]) => (
+              <Tab key={label} eventKey={label} title={label.toUpperCase()}>
                 <PhaseTab
                   title={label}
                   isConnected={isConnected}
@@ -70,8 +79,16 @@ const Banner: React.FC = () => {
         </div>
       </section>
 
-      <DynamicModal show={showSuccess} onHide={() => setShowSuccess(false)} type="success" />
-      <DynamicModal show={showFailure} onHide={() => setShowFailure(false)} type="failure" />
+      <DynamicModal
+        show={showSuccess}
+        onHide={() => setShowSuccess(false)}
+        type="success"
+      />
+      <DynamicModal
+        show={showFailure}
+        onHide={() => setShowFailure(false)}
+        type="failure"
+      />
     </>
   );
 };
