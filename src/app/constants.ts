@@ -1,4 +1,4 @@
-export const MintNFTContract: `0x${string}` = "0x2F911C42812e92F4ab70a39eCc6f69197b2602f1";
+export const  MintNFTContract:`0x${string}`= "0x2F911C42812e92F4ab70a39eCc6f69197b2602f1";
 
 export interface IPhases {
   GTD: "gtd";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/banner.scss";
 import { Modal } from "react-bootstrap";
 import Tab from "react-bootstrap/Tab";
@@ -10,367 +10,68 @@ import { WalletButton } from "./WalletButton";
 import {  useMintNFT, useNftSupply } from "../hooks/useReadContract";
 
 import { useAccount } from "wagmi";
-import { PHASE_MAP, PHASES } from "../constants";
+import { PHASES, PHASE_MAP } from "../constants";
+import PhaseTab from "./banner/PhaseTab";
 
 const Banner: React.FC = () => {
   const { isConnected } = useAccount();
   const { currentPhase, currentPhaseLoading } = useMintNFT();
   const { totalSupply, maxSupply } = useNftSupply();
   const defaultTab = PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? "og";
-  const [key, setKey] = useState<string>(defaultTab);
+  const [activeKey, setActiveKey] = useState<string>("og");
   const [value, setValue] = useState<number | "">(1);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const handleCloseSuccess = () => setShowSuccess(false);
   const handleShowSuccess = () => setShowSuccess(true);
   const [showFailure, setShowFailure] = useState<boolean>(false);
-  const handleCloseFailure = () => setShowFailure(false);
-  const handleShowFailure = () => setShowFailure(true);
 
-  const decrease = () => {
-    if (typeof value === "number" && value > 1) {
-      setValue(value - 1);
+  useEffect(() => {
+    if (currentPhase) {
+      setActiveKey(PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? "og");
     }
-  };
+  }, [currentPhase]);
 
-  const increase = () => {
-    if (typeof value === "number") {
-      setValue(value + 1);
-    }
-  };
-
-  const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    if (/^\d*$/.test(newValue)) {
-      setValue(newValue === "" ? "" : parseInt(newValue, 10));
-    }
-  };
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
 
 
   return (
     <>
       <section className="mainbanner">
-        {/* Background images */}
-        <img
-          src="/assets/bannerbg.png"
-          alt="bannerbg"
-          className="bannerbg d-noneformobile"
-        />
-        <img
-          src="/assets/bannerbgmbl.png"
-          alt="bannerbg"
-          className="bannerbg d-none d-blockformobile"
-        />
+        <img src="/assets/bannerbg.png" alt="bannerbg" className="bannerbg d-noneformobile" />
+        <img src="/assets/bannerbgmbl.png" alt="bannerbg" className="bannerbg d-none d-blockformobile" />
 
-        {/* Right side */}
         <div className="rightman">
           <div className="innertexts">
             <h6 className="numbers">{totalSupply}/{maxSupply}</h6>
             <h1 className="mintedhead">Minted</h1>
           </div>
-          <img
-            src="/assets/rightman.png"
-            alt="rightmanimg"
-            className="rightmanimg"
-          />
+          <img src="/assets/rightman.png" alt="rightmanimg" className="rightmanimg" />
         </div>
 
-        {/* Tabs */}
         <div className="bannertexts">
           <Tabs
-            id="controlled-tab-example"
-            activeKey={key}
-            onSelect={(k) => k && setKey(k)}
+            id="mint-tabs"
+            activeKey={activeKey}
+            onSelect={(k) => k && setActiveKey(k)}
             className="bannertabs"
           >
-            <Tab eventKey="gtd" title={PHASES?.GTD?.toUpperCase()}>
-              <h1 className="whitlisthead">{PHASES?.GTD?.toUpperCase()}</h1>
-              {!isConnected && (
-                <>
-                  <div className="maininput">
-                    <button className="signbutton" onClick={decrease}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="49"
-                        height="49"
-                        viewBox="0 0 49 49"
-                        fill="none"
-                      >
-                        <path
-                          d="M12.5 24.5H36.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </button>
-                    <input
-                      value={value}
-                      onChange={handleChangeValue}
-                      placeholder="1"
-                      type="text"
-                      className="numberinput"
-                    />
-                    <button className="signbutton" onClick={increase}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="49"
-                        height="49"
-                        viewBox="0 0 49 49"
-                        fill="none"
-                      >
-                        <path
-                          d="M12.5 24.5H36.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M24.5 36.5V12.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="details">
-                    <p className="detailpara">Price: 0.03 ETH</p>
-                    <p className="detailpara">Total: 0.03 ETH</p>
-                  </div>
-                </>
-              )}
-              <div className="maingtd">
-                <div className="innergtd">
-                  <p className="gtdpara">Start time</p>
-                  <h6 className="gtdhead">
-                    {!isConnected && <span>27th Aug</span>}
-                    14:18:13
-                    {!isConnected && <span>EST</span>}
-                  </h6>
-                </div>
-                <div className="innergtd">
-                  <p className="gtdpara">Time remaining</p>
-                  <h6 className="gtdhead">TBD</h6>
-                </div>
-              </div>
-              {isConnected && (
-                <p className="publicpara">public mint starts in 2 days</p>
-              )}
-              {isConnected ? (
-                <button className="mintbtn" onClick={handleShowSuccess}>
-                  Mint now
-                </button>
-              ) : (
-                <WalletButton />
-              )}
-              {isConnected && (
-                <span className="eligiblespan">
-                  You are eligible to Mint NFT
-                </span>
-              )}
-            </Tab>
-
-            <Tab eventKey="fcfs" title={PHASES?.FCFS.toUpperCase()}>
-              <h1 className="whitlisthead">{PHASES?.FCFS?.toUpperCase()}</h1>
-              {!isConnected && (
-                <>
-                  <div className="maininput">
-                    <button className="signbutton" onClick={decrease}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="49"
-                        height="49"
-                        viewBox="0 0 49 49"
-                        fill="none"
-                      >
-                        <path
-                          d="M12.5 24.5H36.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </button>
-                    <input
-                      value={value}
-                      onChange={handleChangeValue}
-                      placeholder="1"
-                      type="text"
-                      className="numberinput"
-                    />
-                    <button className="signbutton" onClick={increase}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="49"
-                        height="49"
-                        viewBox="0 0 49 49"
-                        fill="none"
-                      >
-                        <path
-                          d="M12.5 24.5H36.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M24.5 36.5V12.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="details">
-                    <p className="detailpara">Price: 0.03 ETH</p>
-                    <p className="detailpara">Total: 0.03 ETH</p>
-                  </div>
-                </>
-              )}
-              <div className="maingtd">
-                <div className="innergtd">
-                  <p className="gtdpara">Start time</p>
-                  <h6 className="gtdhead">
-                    {!isConnected && <span>27th Aug</span>}
-                    14:18:13
-                    {!isConnected && <span>EST</span>}
-                  </h6>
-                </div>
-                <div className="innergtd">
-                  <p className="gtdpara">Time remaining</p>
-                  <h6 className="gtdhead">TBD</h6>
-                </div>
-              </div>
-              {isConnected && (
-                <p className="publicpara">public mint starts in 2 days</p>
-              )}
-              {!isConnected ? (
-                <WalletButton className="connectbtn" />
-              ) : (
-                // dullbtn is the other class
-                <button className="mintbtn" onClick={handleShowSuccess}>
-                  Mint now
-                </button>
-              )}
-              {isConnected && (
-                <span className="eligiblespan">
-                  You are eligible to Mint NFT
-                </span>
-              )}
-            </Tab>
-
-            <Tab eventKey="public" title={PHASES?.PUBLIC.toUpperCase()}>
-              <h1 className="whitlisthead">{PHASES?.PUBLIC?.toUpperCase()}</h1>
-              {!isConnected && (
-                <>
-                  <div className="maininput">
-                    <button className="signbutton" onClick={decrease}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="49"
-                        height="49"
-                        viewBox="0 0 49 49"
-                        fill="none"
-                      >
-                        <path
-                          d="M12.5 24.5H36.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </button>
-                    <input
-                      value={value}
-                      onChange={handleChangeValue}
-                      placeholder="1"
-                      type="text"
-                      className="numberinput"
-                    />
-                    <button className="signbutton" onClick={increase}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="49"
-                        height="49"
-                        viewBox="0 0 49 49"
-                        fill="none"
-                      >
-                        <path
-                          d="M12.5 24.5H36.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M24.5 36.5V12.5"
-                          stroke="#121212"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="details">
-                    <p className="detailpara">Price: 0.03 ETH</p>
-                    <p className="detailpara">Total: 0.03 ETH</p>
-                  </div>
-                </>
-              )}
-              <div className="maingtd">
-                <div className="innergtd">
-                  <p className="gtdpara">Start time</p>
-                  <h6 className="gtdhead">
-                    {!isConnected && <span>27th Aug</span>}
-                    14:18:13
-                    {!isConnected && <span>EST</span>}
-                  </h6>
-                </div>
-                <div className="innergtd">
-                  <p className="gtdpara">Time remaining</p>
-                  <h6 className="gtdhead">TBD</h6>
-                </div>
-              </div>
-              {isConnected && (
-                <p className="publicpara">public mint starts in 2 days</p>
-              )}
-              {!isConnected ? (
-                <WalletButton className="connectbtn" />
-              ) : (
-                <button className="mintbtn" onClick={handleShowSuccess}>
-                  Mint now
-                </button>
-              )}
-              {isConnected && (
-                <span className="eligiblespan">
-                  You are eligible to Mint NFT
-                </span>
-              )}
-            </Tab>
+            {Object.entries(PHASES).map(([key, label]) => (
+              <Tab key={key} eventKey={key} title={label.toUpperCase()}>
+                <PhaseTab
+                  title={label}
+                  isConnected={isConnected}
+                  value={value}
+                  onValueChange={setValue}
+                  onMint={() => setShowSuccess(true)}
+                />
+              </Tab>
+            ))}
           </Tabs>
         </div>
       </section>
 
-      <DynamicModal
-        show={showSuccess}
-        onHide={handleCloseSuccess}
-        type="success"
-      />
-
-      <DynamicModal
-        show={showFailure}
-        onHide={handleCloseFailure}
-        type="failure"
-      />
+      <DynamicModal show={showSuccess} onHide={() => setShowSuccess(false)} type="success" />
+      <DynamicModal show={showFailure} onHide={() => setShowFailure(false)} type="failure" />
     </>
   );
 };
