@@ -7,7 +7,7 @@ import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { useMintNFT, useNftSupply } from "../hooks/useReadContract";
 import { useAccount } from "wagmi";
-import { PHASES, PHASE_MAP } from "../constants";
+import { CONTRACT_FUNCTIONS, PHASES, PHASE_MAP } from "../constants";
 import PhaseTab from "./banner/PhaseTab";
 import { useMintNFTWrite } from "../hooks/useMintNFTWrite";
 
@@ -29,7 +29,7 @@ const Banner: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
 
-  const { presaleMint, publicMint, isPending } = useMintNFTWrite();
+  const { presaleMint, publicMint, getGasFee } = useMintNFTWrite();
 
   const proofsGTD = Object.fromEntries(
     Object.entries(proofsGTDJson).map(([k, v]) => [k.toLowerCase(), v])
@@ -72,15 +72,40 @@ const Banner: React.FC = () => {
           console.log(`Wallet not eligible for ${PHASES.GTD} phase`);
           return;
         }
-        receipt = await presaleMint(PHASES.GTD, quantity, proof);
+        const gas = await getGasFee(
+          CONTRACT_FUNCTIONS.PRESALE_MINT,
+          [quantity, proof],
+          address as `0x${string}`
+        );
+
+        console.log("Estimated Gas Fee:", gas.estimatedCostInEth, "ETH");
+
+        receipt = await presaleMint(quantity, proof);
       } else if (activeKey === PHASES.FCFS) {
         const proof = proofsFCFS[address.toLowerCase()]?.proof ?? [];
         if (proof.length === 0) {
           console.log(`Wallet not eligible for ${PHASES.FCFS} phase`);
           return;
         }
-        receipt = await presaleMint(PHASES.FCFS, quantity, proof);
+
+        const gas = await getGasFee(
+          CONTRACT_FUNCTIONS.PRESALE_MINT,
+          [quantity, proof],
+          address as `0x${string}`
+        );
+
+        console.log("Estimated Gas Fee:", gas.estimatedCostInEth, "ETH");
+
+        receipt = await presaleMint(quantity, proof);
       } else if (activeKey === PHASES.PUBLIC) {
+        const gas = await getGasFee(
+          CONTRACT_FUNCTIONS.PUBLIC_MINT,
+          [quantity],
+          address as `0x${string}`
+        );
+
+        console.log("Estimated Gas Fee:", gas.estimatedCostInEth, "ETH");
+
         receipt = await publicMint(quantity);
       }
 
@@ -90,7 +115,6 @@ const Banner: React.FC = () => {
         setShowFailure(true);
       }
     } catch (err) {
-      console.error(err);
       setShowFailure(true);
     }
   };

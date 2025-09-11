@@ -33,7 +33,6 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
     <div className="phasetab-container">
       <h1 className="whitlisthead">{title.toUpperCase()}</h1>
 
-      {/* Always show input */}
       <CounterInput value={value} onChange={onValueChange} />
       <div className="details">
         <p className="detailpara">Price: {price} ETH</p>

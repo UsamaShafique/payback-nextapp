@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useConnect } from "wagmi";
+import { useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { WalletLogo } from "./icons/WalletLogo";
 import "../styles/walletModal.scss";
 interface WalletModalProps {
