@@ -33,9 +33,9 @@ export const useMintNFTWrite = () => {
       address: request.address,
       functionName: request.functionName,
       args: request.args,
-      gas: gasOverrides?.gas,
-      maxFeePerGas: gasOverrides?.maxFeePerGas,
-      maxPriorityFeePerGas: gasOverrides?.maxPriorityFeePerGas,
+      // gas: gasOverrides?.gas,
+      // maxFeePerGas: gasOverrides?.maxFeePerGas,
+      // maxPriorityFeePerGas: gasOverrides?.maxPriorityFeePerGas,
     });
 
     return await waitForTransactionReceipt(config, { hash: txHash });
@@ -54,9 +54,9 @@ export const useMintNFTWrite = () => {
       address: request.address,
       functionName: request.functionName,
       args: request.args,
-      gas: gasOverrides?.gas,
-      maxFeePerGas: gasOverrides?.maxFeePerGas,
-      maxPriorityFeePerGas: gasOverrides?.maxPriorityFeePerGas,
+      // gas: gasOverrides?.gas,
+      // maxFeePerGas: gasOverrides?.maxFeePerGas,
+      // maxPriorityFeePerGas: gasOverrides?.maxPriorityFeePerGas,
     });
 
     return await waitForTransactionReceipt(config, { hash: txHash });
