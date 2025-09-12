@@ -81,10 +81,10 @@ export const useMintHandler = () => {
   const mintNFT = async (phase: Phase, quantity: number) => {
     if (!isConnected || !address) throw new Error("Wallet not connected");
     if (!isEligible(phase)) throw new Error(`Wallet not eligible for ${phase}`);
-  
+
     try {
       let receipt;
-  
+
       try {
         receipt = await mintFunctionMap[phase](quantity);
       } catch (err) {
@@ -93,25 +93,26 @@ export const useMintHandler = () => {
         setMintError(humanMessage);
         throw err;
       }
-  
+
       if (receipt.status === "success") {
         setMintSuccess(true);
-        setMintError(null); 
+        setMintError(null);
       } else {
         setMintFailure(true);
-        setMintError("Transaction failed. Please check your wallet or try again.");
+        setMintError(
+          "Transaction failed. Please check your wallet or try again."
+        );
       }
-  
+
       return receipt;
-    } catch (err) {
-      if (!mintError) {
-        const humanMessage = parseMintError(err);
-        setMintError(humanMessage);
-      }
-      throw err;
+    } catch (err: any) {
+      const humanMessage = parseMintError(err);
+      setMintFailure(true);
+      setMintSuccess(false);
+      setMintError(humanMessage);
+      return;
     }
   };
-  
 
   return {
     mintNFT,

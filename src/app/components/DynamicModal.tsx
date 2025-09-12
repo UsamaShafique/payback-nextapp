@@ -14,8 +14,11 @@ const DynamicModal: FC<DynamicModalProps> = ({
   onHide,
   type,
   errorMessage,
+  mintedId,
 }) => {
   const isSuccess = type === "success";
+  const mintedIds = mintedId?.split(",") || [];
+
   return (
     <Modal show={show} onHide={onHide} centered className="bannermodal">
       <Modal.Body>
@@ -78,7 +81,9 @@ const DynamicModal: FC<DynamicModalProps> = ({
 
           {isSuccess && (
             <>
-              <p className="modalpara">You minted #1024</p>
+              <p className="modalpara">
+                {mintedIds.map((id) => `#${id.trim()}`).join(", ")}
+              </p>
               <div className="modalbtns">
                 <button className="innerbtn">View explorer</button>
                 <button className="innerbtn">View collection</button>

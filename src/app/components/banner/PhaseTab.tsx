@@ -3,9 +3,10 @@
 import React from "react";
 import CounterInput from "../banner/CounterInput";
 import { WalletButton } from "../../components/WalletButton";
-import { useAccount } from "wagmi";
-import { Phase } from "@/app/constants";
-import { useNftSupply } from "@/app/hooks/useReadContract";
+import { useAccount, useBalance } from "wagmi";
+import { MAX_QUANTITY_PER_PHASE, Phase, PhaseKey } from "@/app/constants";
+import { useNftSupply, useWalletMintCount } from "@/app/hooks/useReadContract";
+import toast from "react-hot-toast";
 
 interface PhaseTabProps {
   title: string;
@@ -27,37 +28,53 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
   isEligible = false,
   startTime = "TBD",
   timeRemaining = "TBD",
-  price = 0.03,
   quantity,
   activeKey,
   mintNFT,
 }) => {
   const { address } = useAccount();
+  const { data: balanceData } = useBalance({ address }); // wagmi hook to get ETH balance
   const { refetchTotalSupply } = useNftSupply();
   const [isMinting, setIsMinting] = React.useState(false);
-  
+  const { mintedCount, refetch: refetchMintCount } = useWalletMintCount(
+    address,
+    activeKey
+  );
+
   const handleMint = async () => {
     if (!activeKey) return;
+    if (!balanceData || balanceData.value === 0n) {
+      toast.error("Insufficient balance!", { duration: 3000 });
+      return;
+    }
+    const maxPerPhase = MAX_QUANTITY_PER_PHASE[activeKey];
+    if (mintedCount + quantity > maxPerPhase) {
+      toast.error(
+        `Your wallet mint limit of ${maxPerPhase} for this phase is exceeded!`
+      );
+      return;
+    }
     setIsMinting(true);
+
     try {
       await mintNFT(activeKey, quantity);
       await refetchTotalSupply();
-    } catch (err) {
-      throw err;
+      await refetchMintCount();
+    } catch (err: any) {
+      console.log(err);
     } finally {
       setIsMinting(false);
     }
   };
-
   return (
     <div className="phasetab-container">
       <h1 className="whitlisthead">{title.toUpperCase()}</h1>
 
-      <CounterInput value={value} onChange={onValueChange} />
-      <div className="details">
-        {/* <p className="detailpara">Price: {price} ETH</p> */}
-        {/* <p className="detailpara">Total: {total.toFixed(3)} ETH</p> */}
-      </div>
+      <CounterInput
+        value={value}
+        onChange={onValueChange}
+        phase={title as PhaseKey}
+      />
 
       <div className="maingtd">
         <div className="innergtd">

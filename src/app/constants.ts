@@ -25,6 +25,20 @@ export const CONTRACT_FUNCTIONS = {
   MAX_SUPPLY: "MAX_SUPPLY",
   PRESALE_MINT: "presaleMint",
   PUBLIC_MINT: "publicMint",
+  PUBLIC_MINT_COUNT:"publicMintCount",
+  GTD_MINT_COUNT:"wlGtdMintCount", 
+  FCFS_MINT_COUNT:"wlFcfsMintCount"
+
+
 } as const;
+
+export const MAX_QUANTITY_PER_PHASE = {
+  gtd: 1,
+  fcfs: 1,
+  public: 2,
+} as const;
+
+export type PhaseKey = keyof typeof MAX_QUANTITY_PER_PHASE; 
+
 
 export type Phase = (typeof PHASES)[keyof typeof PHASES];

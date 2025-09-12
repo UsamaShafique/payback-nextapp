@@ -17,6 +17,7 @@ export function getConfig() {
     ssr: true,
     transports: {
       [sepolia.id]: http(),
+      chains: [sepolia],
     },
   });
 }

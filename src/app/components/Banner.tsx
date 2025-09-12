@@ -83,7 +83,6 @@ const Banner: React.FC = () => {
                   value={value}
                   onValueChange={setValue}
                   isEligible={eligibilityMap[phase as Phase]}
-                  price={0.03}
                   startTime="TBD"
                   timeRemaining="TBD"
                   quantity={value || 1}
@@ -100,6 +99,14 @@ const Banner: React.FC = () => {
         show={mintSuccess}
         onHide={() => setMintSuccess(false)}
         type="success"
+        mintedId={
+          value && value > 1
+            ? Array.from(
+                { length: value },
+                (_, i) => totalSupply - value + i + 1
+              ).join(", ")
+            : `${totalSupply}`
+        }
       />
       <DynamicModal
         show={mintFailure}
