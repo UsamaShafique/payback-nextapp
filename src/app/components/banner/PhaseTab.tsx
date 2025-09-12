@@ -35,6 +35,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
   const { address } = useAccount();
   const { refetchTotalSupply } = useNftSupply();
   const [isMinting, setIsMinting] = React.useState(false);
+  
   const handleMint = async () => {
     if (!activeKey) return;
     setIsMinting(true);
