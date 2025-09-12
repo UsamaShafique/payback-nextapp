@@ -17,14 +17,21 @@ export const useMintNFT = () => {
     isPhaseError,
   };
 };
+
 export const useNftSupply = () => {
-  const { data: totalSupplyData } = useReadContract({
+  const {
+    data: totalSupplyData,
+    refetch: refetchTotalSupply, // ✅ add refetch
+  } = useReadContract({
     address: MintNFTContract,
     abi: mintNftsAbi,
     functionName: CONTRACT_FUNCTIONS.TOTAL_SUPPLY,
   });
 
-  const { data: maxSupplyData } = useReadContract({
+  const {
+    data: maxSupplyData,
+    refetch: refetchMaxSupply, // optional if maxSupply can change
+  } = useReadContract({
     address: MintNFTContract,
     abi: mintNftsAbi,
     functionName: CONTRACT_FUNCTIONS.MAX_SUPPLY,
@@ -33,5 +40,7 @@ export const useNftSupply = () => {
   return {
     totalSupply: totalSupplyData ? Number(totalSupplyData) : 0,
     maxSupply: maxSupplyData ? Number(maxSupplyData) : 0,
+    refetchTotalSupply,
+    refetchMaxSupply,
   };
-}
+};

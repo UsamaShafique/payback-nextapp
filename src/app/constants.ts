@@ -26,3 +26,5 @@ export const CONTRACT_FUNCTIONS = {
   PRESALE_MINT: "presaleMint",
   PUBLIC_MINT: "publicMint",
 } as const;
+
+export type Phase = (typeof PHASES)[keyof typeof PHASES];

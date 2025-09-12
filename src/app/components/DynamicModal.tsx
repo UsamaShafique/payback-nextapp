@@ -5,16 +5,20 @@ type DynamicModalProps = {
   show: boolean;
   onHide: () => void;
   type: "success" | "failure";
-  mintedId?: string; // only needed for success modal
+  mintedId?: string;
+  errorMessage?: string | null;
 };
 
-const DynamicModal: FC<DynamicModalProps> = ({ show, onHide, type }) => {
+const DynamicModal: FC<DynamicModalProps> = ({
+  show,
+  onHide,
+  type,
+  errorMessage,
+}) => {
   const isSuccess = type === "success";
-
   return (
     <Modal show={show} onHide={onHide} centered className="bannermodal">
       <Modal.Body>
-        {/* Close Button */}
         <button className="closebtn" onClick={onHide}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +44,6 @@ const DynamicModal: FC<DynamicModalProps> = ({ show, onHide, type }) => {
           </svg>
         </button>
 
-        {/* Images */}
         {isSuccess ? (
           <>
             <img
@@ -62,7 +65,6 @@ const DynamicModal: FC<DynamicModalProps> = ({ show, onHide, type }) => {
           />
         )}
 
-        {/* Texts */}
         <div
           className="modaltexts"
           style={!isSuccess ? { marginTop: "9.027vw" } : {}}
@@ -70,6 +72,9 @@ const DynamicModal: FC<DynamicModalProps> = ({ show, onHide, type }) => {
           <h1 className="modalhead">
             {isSuccess ? "Mint successful!" : "Mint UNsuccessful!"}
           </h1>
+          {!isSuccess && errorMessage && (
+            <p className="modalpara">{errorMessage}</p>
+          )}
 
           {isSuccess && (
             <>

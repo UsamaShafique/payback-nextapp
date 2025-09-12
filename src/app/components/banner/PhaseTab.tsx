@@ -35,8 +35,8 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
 
       <CounterInput value={value} onChange={onValueChange} />
       <div className="details">
-        <p className="detailpara">Price: {price} ETH</p>
-        <p className="detailpara">Total: {total.toFixed(3)} ETH</p>
+        {/* <p className="detailpara">Price: {price} ETH</p> */}
+        {/* <p className="detailpara">Total: {total.toFixed(3)} ETH</p> */}
       </div>
 
       <div className="maingtd">

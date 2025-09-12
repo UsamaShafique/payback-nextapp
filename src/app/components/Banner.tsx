@@ -7,37 +7,27 @@ import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { useMintNFT, useNftSupply } from "../hooks/useReadContract";
 import { useAccount } from "wagmi";
-import { CONTRACT_FUNCTIONS, PHASES, PHASE_MAP } from "../constants";
+import { PHASES, PHASE_MAP, Phase } from "../constants";
 import PhaseTab from "./banner/PhaseTab";
-import { useMintNFTWrite } from "../hooks/useMintNFTWrite";
-
-import proofsGTDJson from "../utils/Proofs-GTD.json";
-import proofsFCFSJson from "../utils/Proofs-FCFS.json";
-
-type ProofsType = Record<string, { proof: string[] }>;
+import { useMintHandler } from "../hooks/useMintHandler";
 
 const Banner: React.FC = () => {
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
   const { currentPhase, currentPhaseLoading } = useMintNFT();
-  const { totalSupply, maxSupply } = useNftSupply();
+  const { totalSupply, maxSupply, refetchTotalSupply } = useNftSupply();
+  const {
+    mintNFT,
+    mintSuccess,
+    mintFailure,
+    setMintSuccess,
+    setMintFailure,
+    isEligible,
+    mintError,
+    setMintError,
+  } = useMintHandler();
 
-  const [activeKey, setActiveKey] = useState<string | undefined>(undefined);
+  const [activeKey, setActiveKey] = useState<Phase | undefined>(undefined);
   const [value, setValue] = useState<number | "">(1);
-  const [eligibilityMap, setEligibilityMap] = useState<Record<string, boolean>>(
-    {}
-  );
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showFailure, setShowFailure] = useState(false);
-
-  const { presaleMint, publicMint, getGasFee } = useMintNFTWrite();
-
-  const proofsGTD = Object.fromEntries(
-    Object.entries(proofsGTDJson).map(([k, v]) => [k.toLowerCase(), v])
-  ) as ProofsType;
-
-  const proofsFCFS = Object.fromEntries(
-    Object.entries(proofsFCFSJson).map(([k, v]) => [k.toLowerCase(), v])
-  ) as ProofsType;
 
   useEffect(() => {
     setActiveKey(
@@ -45,81 +35,24 @@ const Banner: React.FC = () => {
     );
   }, [currentPhase]);
 
-  useEffect(() => {
-    const lowerAddr = address?.toLowerCase() ?? "";
-    if (!isConnected || !address) {
-      setEligibilityMap({});
-      return;
-    }
-
-    setEligibilityMap({
-      [PHASES.GTD]: Boolean(proofsGTD[lowerAddr]),
-      [PHASES.FCFS]: Boolean(proofsFCFS[lowerAddr]),
-      [PHASES.PUBLIC]: true,
-    });
-  }, [address, isConnected]);
-
   const handleMint = async () => {
-    if (!address || !isConnected || !activeKey) return;
+    if (!activeKey) return;
+    const quantity = value || 1;
 
     try {
-      const quantity = value || 1;
-      let receipt;
-
-      if (activeKey === PHASES.GTD) {
-        const proof = proofsGTD[address.toLowerCase()]?.proof ?? [];
-        if (proof.length === 0) {
-          console.log(`Wallet not eligible for ${PHASES.GTD} phase`);
-          return;
-        }
-        const gas = await getGasFee(
-          CONTRACT_FUNCTIONS.PRESALE_MINT,
-          [quantity, proof],
-          address as `0x${string}`
-        );
-
-        console.log("Estimated Gas Fee:", gas.estimatedCostInEth, "ETH");
-
-        receipt = await presaleMint(quantity, proof);
-      } else if (activeKey === PHASES.FCFS) {
-        const proof = proofsFCFS[address.toLowerCase()]?.proof ?? [];
-        if (proof.length === 0) {
-          console.log(`Wallet not eligible for ${PHASES.FCFS} phase`);
-          return;
-        }
-
-        const gas = await getGasFee(
-          CONTRACT_FUNCTIONS.PRESALE_MINT,
-          [quantity, proof],
-          address as `0x${string}`
-        );
-
-        console.log("Estimated Gas Fee:", gas.estimatedCostInEth, "ETH");
-
-        receipt = await presaleMint(quantity, proof);
-      } else if (activeKey === PHASES.PUBLIC) {
-        const gas = await getGasFee(
-          CONTRACT_FUNCTIONS.PUBLIC_MINT,
-          [quantity],
-          address as `0x${string}`
-        );
-
-        console.log("Estimated Gas Fee:", gas.estimatedCostInEth, "ETH");
-
-        receipt = await publicMint(quantity);
-      }
-
-      if (receipt?.status === "success") {
-        setShowSuccess(true);
-      } else {
-        setShowFailure(true);
-      }
+      await mintNFT(activeKey, quantity);
+      await refetchTotalSupply();
     } catch (err) {
-      setShowFailure(true);
-    }
+      throw err;    }
   };
 
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
+
+  const eligibilityMap: Record<Phase, boolean> = {
+    [PHASES.GTD]: isEligible(PHASES.GTD),
+    [PHASES.FCFS]: isEligible(PHASES.FCFS),
+    [PHASES.PUBLIC]: true,
+  };
 
   return (
     <>
@@ -153,18 +86,18 @@ const Banner: React.FC = () => {
           <Tabs
             id="mint-tabs"
             activeKey={activeKey}
-            onSelect={(k) => k && setActiveKey(k)}
+            onSelect={(k) => k && setActiveKey(k as Phase)}
             className="bannertabs"
           >
-            {Object.entries(PHASES).map(([_, label]) => (
-              <Tab key={label} eventKey={label} title={label.toUpperCase()}>
+            {Object.values(PHASES).map((phase) => (
+              <Tab key={phase} eventKey={phase} title={phase.toUpperCase()}>
                 <PhaseTab
-                  title={label}
+                  title={phase}
                   isConnected={isConnected}
                   value={value}
                   onValueChange={setValue}
                   onMint={handleMint}
-                  isEligible={eligibilityMap[label] ?? false}
+                  isEligible={eligibilityMap[phase as Phase]} // ✅ cast label to Phase
                   price={0.03}
                   startTime="TBD"
                   timeRemaining="TBD"
@@ -176,14 +109,18 @@ const Banner: React.FC = () => {
       </section>
 
       <DynamicModal
-        show={showSuccess}
-        onHide={() => setShowSuccess(false)}
+        show={mintSuccess}
+        onHide={() => setMintSuccess(false)}
         type="success"
       />
       <DynamicModal
-        show={showFailure}
-        onHide={() => setShowFailure(false)}
+        show={mintFailure}
         type="failure"
+        onHide={() => {
+          setMintFailure(false);
+          setMintError(null);
+        }}
+        errorMessage={mintError}
       />
     </>
   );
