@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import { type ReactNode } from "react";
 import { cookieToInitialState } from "wagmi";
-import { getConfig } from "../wagmi";
+import { config } from "../wagmi"; // use this instead of getConfig()
 import { Providers } from "./providers";
 import Script from "next/script";
 import { Toaster } from "react-hot-toast"; // <--- import
@@ -17,10 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout(props: { children: ReactNode }) {
-  const initialState = cookieToInitialState(
-    getConfig(),
-    headers().get("cookie")
-  );
+  const initialState = cookieToInitialState(config, headers().get("cookie"));
+
 
   return (
     <html lang="en">

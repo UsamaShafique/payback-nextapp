@@ -32,16 +32,18 @@ const Header: React.FC = () => {
             <LinktreeIcon />
           </a>
 
-          {address ? (
-            <button className="disconnectbtn" onClick={() => disconnect()}>
-              Disconnect
-            </button>
-          ) : (
-            <WalletButton className="connectbtn" />
-          )}
+          <div className="d-none d-md-block">
+            {address ? (
+              <button className="disconnectbtn" onClick={() => disconnect()}>
+                Disconnect
+              </button>
+            ) : (
+              <WalletButton className="connectbtn" />
+            )}
+          </div>
 
           <HamburgerIcon
-            className="d-none d-blockformobile"
+            className="d-block d-md-none" 
             onClick={() => setShowSidebar(true)}
           />
         </div>

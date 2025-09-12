@@ -7,10 +7,7 @@ interface WalletModalProps {
   onClose: () => void;
 }
 
-export const WalletModal: React.FC<WalletModalProps> = ({
-  open,
-  onClose,
-}) => {
+export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
   const { connectors, connectAsync, error } = useConnect();
 
   const [loadingConnector, setLoadingConnector] = useState<string | null>(null);
