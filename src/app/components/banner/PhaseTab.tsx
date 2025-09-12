@@ -33,16 +33,18 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
   mintNFT,
 }) => {
   const { address } = useAccount();
-  const total = typeof value === "number" ? value * price : 0;
-  const {refetchTotalSupply } = useNftSupply();
-
+  const { refetchTotalSupply } = useNftSupply();
+  const [isMinting, setIsMinting] = React.useState(false);
   const handleMint = async () => {
     if (!activeKey) return;
+    setIsMinting(true);
     try {
       await mintNFT(activeKey, quantity);
       await refetchTotalSupply();
     } catch (err) {
       throw err;
+    } finally {
+      setIsMinting(false);
     }
   };
 
@@ -77,9 +79,9 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
           <button
             className="mintbtn"
             onClick={handleMint}
-            disabled={!isEligible}
+            disabled={!isEligible || isMinting}
           >
-            Mint now
+            {isMinting ? "Minting..." : "Mint now"}
           </button>
         </>
       ) : (
