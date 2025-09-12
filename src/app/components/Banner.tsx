@@ -6,13 +6,11 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import DynamicModal from "./DynamicModal";
 import { useMintNFT, useNftSupply } from "../hooks/useReadContract";
-import { useAccount } from "wagmi";
 import { PHASES, PHASE_MAP, Phase } from "../constants";
 import PhaseTab from "./banner/PhaseTab";
 import { useMintHandler } from "../hooks/useMintHandler";
 
 const Banner: React.FC = () => {
-
   const { currentPhase, currentPhaseLoading } = useMintNFT();
   const { totalSupply, maxSupply, refetchTotalSupply } = useNftSupply();
   const {
@@ -34,18 +32,6 @@ const Banner: React.FC = () => {
       PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? undefined
     );
   }, [currentPhase]);
-
-  const handleMint = async () => {
-    if (!activeKey) return;
-    const quantity = value || 1;
-
-    try {
-      await mintNFT(activeKey, quantity);
-      await refetchTotalSupply();
-    } catch (err) {
-      throw err;
-    }
-  };
 
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
 
@@ -96,11 +82,13 @@ const Banner: React.FC = () => {
                   title={phase}
                   value={value}
                   onValueChange={setValue}
-                  onMint={handleMint}
                   isEligible={eligibilityMap[phase as Phase]}
                   price={0.03}
                   startTime="TBD"
                   timeRemaining="TBD"
+                  quantity={value || 1}
+                  activeKey={activeKey as Phase}
+                  mintNFT={mintNFT}
                 />
               </Tab>
             ))}

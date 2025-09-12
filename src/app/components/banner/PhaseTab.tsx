@@ -4,30 +4,47 @@ import React from "react";
 import CounterInput from "../banner/CounterInput";
 import { WalletButton } from "../../components/WalletButton";
 import { useAccount } from "wagmi";
+import { Phase } from "@/app/constants";
+import { useNftSupply } from "@/app/hooks/useReadContract";
 
 interface PhaseTabProps {
   title: string;
   value: number | "";
   onValueChange: (val: number | "") => void;
-  onMint: () => void;
   isEligible?: boolean;
   startTime?: string;
   timeRemaining?: string;
   price?: number;
+  quantity: number;
+  activeKey: Phase;
+  mintNFT: (phase: Phase, quantity: number) => Promise<any>;
 }
 
 const PhaseTab: React.FC<PhaseTabProps> = ({
   title,
   value,
   onValueChange,
-  onMint,
   isEligible = false,
   startTime = "TBD",
   timeRemaining = "TBD",
   price = 0.03,
+  quantity,
+  activeKey,
+  mintNFT,
 }) => {
   const { address } = useAccount();
   const total = typeof value === "number" ? value * price : 0;
+  const {refetchTotalSupply } = useNftSupply();
+
+  const handleMint = async () => {
+    if (!activeKey) return;
+    try {
+      await mintNFT(activeKey, quantity);
+      await refetchTotalSupply();
+    } catch (err) {
+      throw err;
+    }
+  };
 
   return (
     <div className="phasetab-container">
@@ -57,7 +74,11 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
               ? "You are eligible to Mint NFT"
               : "You are not eligible to Mint NFT"}
           </p>
-          <button className="mintbtn" onClick={onMint} disabled={!isEligible}>
+          <button
+            className="mintbtn"
+            onClick={handleMint}
+            disabled={!isEligible}
+          >
             Mint now
           </button>
         </>

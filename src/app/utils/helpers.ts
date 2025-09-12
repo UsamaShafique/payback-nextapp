@@ -35,35 +35,26 @@ export async function estimateGasFee(
   };
 }
 
-export const parseMintError = (err: Error | any): string => {
-  const lower = err.message?.toLowerCase() || "";
+export const parseMintError = (err: any): string => {
+  if (!err) return "Unknown error occurred";
 
+  const message = err.shortMessage || err.reason || err.message || "";
+
+  const match = message.match(/Error:\s*([\w]+)/);
+  if (match && match[1]) return match[1]; // e.g., "ExceedsWalletLimit"
+
+  const normalized = message.toLowerCase().replace(/[^a-z0-9]/g, "");
   const errorMap: [RegExp, string][] = [
-    [/user (denied|rejected)/, "You rejected the transaction."],
-    [
-      /intrinsic gas too low/,
-      "Transaction failed: gas limit too low. Please try again.",
-    ],
-    [
-      /insufficient funds/,
-      "Transaction failed: insufficient funds to complete the transaction.",
-    ],
+    [/userdenied|userrejected/, "You rejected the transaction."],
+    [/intrinsicgastoolow/, "Transaction failed: gas limit too low."],
+    [/insufficientfunds/, "Transaction failed: insufficient funds."],
     [/salenotactive/, "Sale is not active yet."],
   ];
-
-  for (const [pattern, message] of errorMap) {
-    if (pattern.test(lower)) return message;
+  for (const [pattern, friendly] of errorMap) {
+    if (pattern.test(normalized)) return friendly;
   }
 
-  if (
-    [
-      "ContractFunctionExecutionError",
-      "ContractFunctionRevertedError",
-    ].includes(err.name)
-  ) {
-    return (err as any).shortMessage ?? err.message;
-  }
-  return err.message.length > 120
+  return message.length > 120
     ? "Transaction failed. Please check your wallet or try again."
-    : err.message;
+    : message;
 };
