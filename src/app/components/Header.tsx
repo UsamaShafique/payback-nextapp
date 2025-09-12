@@ -12,7 +12,7 @@ import {
 
 const Header: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
-  const { isConnected } = useAccount();
+  const { address } = useAccount();
   const { disconnect } = useDisconnect();
 
   return (
@@ -32,7 +32,7 @@ const Header: React.FC = () => {
             <LinktreeIcon />
           </a>
 
-          {isConnected ? (
+          {address ? (
             <button className="disconnectbtn" onClick={() => disconnect()}>
               Disconnect
             </button>
@@ -72,7 +72,7 @@ const Header: React.FC = () => {
         </Offcanvas.Body>
 
         <div className="endbutton">
-          {isConnected ? (
+          {address ? (
             <button className="disconnect" onClick={() => disconnect()}>
               Disconnect
             </button>

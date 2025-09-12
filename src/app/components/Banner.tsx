@@ -12,7 +12,7 @@ import PhaseTab from "./banner/PhaseTab";
 import { useMintHandler } from "../hooks/useMintHandler";
 
 const Banner: React.FC = () => {
-  const { isConnected } = useAccount();
+
   const { currentPhase, currentPhaseLoading } = useMintNFT();
   const { totalSupply, maxSupply, refetchTotalSupply } = useNftSupply();
   const {
@@ -43,7 +43,8 @@ const Banner: React.FC = () => {
       await mintNFT(activeKey, quantity);
       await refetchTotalSupply();
     } catch (err) {
-      throw err;    }
+      throw err;
+    }
   };
 
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
@@ -93,11 +94,10 @@ const Banner: React.FC = () => {
               <Tab key={phase} eventKey={phase} title={phase.toUpperCase()}>
                 <PhaseTab
                   title={phase}
-                  isConnected={isConnected}
                   value={value}
                   onValueChange={setValue}
                   onMint={handleMint}
-                  isEligible={eligibilityMap[phase as Phase]} // ✅ cast label to Phase
+                  isEligible={eligibilityMap[phase as Phase]}
                   price={0.03}
                   startTime="TBD"
                   timeRemaining="TBD"

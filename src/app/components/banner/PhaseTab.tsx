@@ -3,10 +3,10 @@
 import React from "react";
 import CounterInput from "../banner/CounterInput";
 import { WalletButton } from "../../components/WalletButton";
+import { useAccount } from "wagmi";
 
 interface PhaseTabProps {
   title: string;
-  isConnected: boolean;
   value: number | "";
   onValueChange: (val: number | "") => void;
   onMint: () => void;
@@ -18,7 +18,6 @@ interface PhaseTabProps {
 
 const PhaseTab: React.FC<PhaseTabProps> = ({
   title,
-  isConnected,
   value,
   onValueChange,
   onMint,
@@ -27,6 +26,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
   timeRemaining = "TBD",
   price = 0.03,
 }) => {
+  const { address } = useAccount();
   const total = typeof value === "number" ? value * price : 0;
 
   return (
@@ -50,7 +50,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
         </div>
       </div>
 
-      {isConnected ? (
+      {address ? (
         <>
           <p className="publicpara">
             {isEligible
