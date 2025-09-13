@@ -19,6 +19,13 @@ export const PHASE_MAP = {
   3: PHASES.PUBLIC,
 };
 
+export const PHASE_LABELS: Record<number, string> = {
+  0: "None",
+  1: "GTD",
+  2: "FCFS",
+  3: "Public",
+};
+
 export const CONTRACT_FUNCTIONS = {
   CURRENT_PHASE: "currentPhase",
   TOTAL_SUPPLY: "totalSupply",

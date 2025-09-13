@@ -4,8 +4,18 @@ import React from "react";
 import CounterInput from "../banner/CounterInput";
 import { WalletButton } from "../../components/WalletButton";
 import { useAccount, useBalance } from "wagmi";
-import { MAX_QUANTITY_PER_PHASE, Phase, PhaseKey } from "@/app/constants";
-import { useNftSupply, useWalletMintCount } from "@/app/hooks/useReadContract";
+import {
+  MAX_QUANTITY_PER_PHASE,
+  Phase,
+  PHASE_MAP,
+  PhaseKey,
+  PHASE_LABELS,
+} from "@/app/constants";
+import {
+  useMintNFT,
+  useNftSupply,
+  useWalletMintCount,
+} from "@/app/hooks/useReadContract";
 import toast from "react-hot-toast";
 
 interface PhaseTabProps {
@@ -33,7 +43,9 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
   mintNFT,
 }) => {
   const { address } = useAccount();
-  const { data: balanceData } = useBalance({ address }); // wagmi hook to get ETH balance
+  const { data: balanceData } = useBalance({ address });
+  const { currentPhase } = useMintNFT();
+
   const { refetchTotalSupply } = useNftSupply();
   const [isMinting, setIsMinting] = React.useState(false);
   const { mintedCount, refetch: refetchMintCount } = useWalletMintCount(
@@ -43,29 +55,49 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
 
   const handleMint = async () => {
     if (!activeKey) return;
-    if (!balanceData || balanceData.value === 0n) {
-      toast.error("Insufficient balance!", { duration: 3000 });
-      return;
-    }
-    const maxPerPhase = MAX_QUANTITY_PER_PHASE[activeKey];
-    if (mintedCount + quantity > maxPerPhase) {
-      toast.error(
-        `Your wallet mint limit of ${maxPerPhase} for this phase is exceeded!`
-      );
-      return;
-    }
-    setIsMinting(true);
 
+    const validations: { condition: boolean; message: string }[] = [
+      {
+        condition: !isEligible,
+        message: "You are not eligible to mint in this phase.",
+      },
+      {
+        condition:
+          currentPhase === 0 ||
+          PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] !== activeKey,
+        message: `Mint not available. Active sale: ${PHASE_LABELS[currentPhase]}`,
+      },
+      {
+        condition: !balanceData || balanceData.value === 0n,
+        message: "Insufficient balance!",
+      },
+      {
+        condition:
+          (mintedCount ?? 0) + quantity > MAX_QUANTITY_PER_PHASE[activeKey],
+        message: `Wallet limit exceeded! Max ${MAX_QUANTITY_PER_PHASE[activeKey]} allowed.`,
+      },
+    ];
+
+    for (const v of validations) {
+      if (v.condition) {
+        toast.error(v.message, { duration: 3000 });
+        return;
+      }
+    }
+
+    setIsMinting(true);
     try {
       await mintNFT(activeKey, quantity);
       await refetchTotalSupply();
       await refetchMintCount();
     } catch (err: any) {
-      console.log(err);
+      console.error(err);
+      toast.error("Mint failed. Please try again.");
     } finally {
       setIsMinting(false);
     }
   };
+
   return (
     <div className="phasetab-container">
       <h1 className="whitlisthead">{title.toUpperCase()}</h1>
@@ -94,11 +126,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
               ? "You are eligible to Mint NFT"
               : "You are not eligible to Mint NFT"}
           </p>
-          <button
-            className="mintbtn"
-            onClick={handleMint}
-            disabled={!isEligible || isMinting}
-          >
+          <button className="mintbtn" onClick={handleMint} disabled={isMinting}>
             {isMinting ? "Minting..." : "Mint now"}
           </button>
         </>
