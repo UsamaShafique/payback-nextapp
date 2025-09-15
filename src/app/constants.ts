@@ -37,6 +37,8 @@ export const CONTRACT_FUNCTIONS = {
   FCFS_MINT_COUNT: "wlFcfsMintCount",
 } as const;
 
+export const EXPLORER_BASE = "https://sepolia.etherscan.io";
+
 export const MAX_QUANTITY_PER_PHASE = {
   gtd: 1,
   fcfs: 1,

@@ -3,7 +3,7 @@
 import { simulateContract, estimateFeesPerGas } from "@wagmi/core";
 import { formatEther } from "viem";
 import { config } from "../../wagmi";
-import { MintNFTContract } from "../constants";
+import { EXPLORER_BASE, MintNFTContract } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
 
 export async function estimateGasFee(
@@ -70,6 +70,5 @@ export const parseMintError = (err: any): string => {
     : rawMessage;
 };
 
-const EXPLORER_BASE = "https://sepolia.etherscan.io";
 export const getTokenExplorerUrl = (tokenId: string) =>
   `${EXPLORER_BASE}/token/${MintNFTContract}?a=${tokenId}`;
