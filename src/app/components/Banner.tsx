@@ -28,9 +28,11 @@ const Banner: React.FC = () => {
   const [value, setValue] = useState<number | "">(1);
 
   useEffect(() => {
+    if(currentPhase){
     setActiveKey(
       PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? undefined
     );
+  }
   }, [currentPhase]);
 
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
