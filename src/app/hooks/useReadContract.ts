@@ -22,19 +22,14 @@ export const useMintNFT = () => {
 };
 
 export const useNftSupply = () => {
-  const {
-    data: totalSupplyData,
-    refetch: refetchTotalSupply, 
-  } = useReadContract({
-    address: MintNFTContract,
-    abi: mintNftsAbi,
-    functionName: CONTRACT_FUNCTIONS.TOTAL_SUPPLY,
-  });
+  const { data: totalSupplyData, refetch: refetchTotalSupply } =
+    useReadContract({
+      address: MintNFTContract,
+      abi: mintNftsAbi,
+      functionName: CONTRACT_FUNCTIONS.TOTAL_SUPPLY,
+    });
 
-  const {
-    data: maxSupplyData,
-    refetch: refetchMaxSupply, 
-  } = useReadContract({
+  const { data: maxSupplyData, refetch: refetchMaxSupply } = useReadContract({
     address: MintNFTContract,
     abi: mintNftsAbi,
     functionName: CONTRACT_FUNCTIONS.MAX_SUPPLY,

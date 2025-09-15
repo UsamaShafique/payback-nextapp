@@ -70,7 +70,6 @@ export const parseMintError = (err: any): string => {
     : rawMessage;
 };
 
-
 const EXPLORER_BASE = "https://sepolia.etherscan.io";
 export const getTokenExplorerUrl = (tokenId: string) =>
   `${EXPLORER_BASE}/token/${MintNFTContract}?a=${tokenId}`;
