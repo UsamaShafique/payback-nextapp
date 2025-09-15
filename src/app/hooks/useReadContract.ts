@@ -24,7 +24,7 @@ export const useMintNFT = () => {
 export const useNftSupply = () => {
   const {
     data: totalSupplyData,
-    refetch: refetchTotalSupply, // ✅ add refetch
+    refetch: refetchTotalSupply, 
   } = useReadContract({
     address: MintNFTContract,
     abi: mintNftsAbi,
@@ -33,7 +33,7 @@ export const useNftSupply = () => {
 
   const {
     data: maxSupplyData,
-    refetch: refetchMaxSupply, // optional if maxSupply can change
+    refetch: refetchMaxSupply, 
   } = useReadContract({
     address: MintNFTContract,
     abi: mintNftsAbi,
