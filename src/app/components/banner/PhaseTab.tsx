@@ -10,55 +10,56 @@ import {
   PHASE_MAP,
   PhaseKey,
   PHASE_LABELS,
+  TBD_TEXT,
 } from "@/app/constants";
+
 import {
   useMintNFT,
   useNftSupply,
   useWalletMintCount,
 } from "@/app/hooks/useReadContract";
 import toast from "react-hot-toast";
+import DynamicModal from "../DynamicModal";
+import { useMintHandler } from "@/app/hooks/useMintHandler";
 
 interface PhaseTabProps {
   title: string;
-  value: number | "";
-  onValueChange: (val: number | "") => void;
-  isEligible?: boolean;
-  startTime?: string;
-  timeRemaining?: string;
-  price?: number;
-  quantity: number;
   activeKey: Phase;
-  mintNFT: (phase: Phase, quantity: number) => Promise<any>;
 }
 
-const PhaseTab: React.FC<PhaseTabProps> = ({
-  title,
-  value,
-  onValueChange,
-  isEligible = false,
-  startTime = "TBD",
-  timeRemaining = "TBD",
-  quantity,
-  activeKey,
-  mintNFT,
-}) => {
+const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
   const { address } = useAccount();
   const { data: balanceData } = useBalance({ address });
   const { currentPhase } = useMintNFT();
-
-  const { refetchTotalSupply } = useNftSupply();
-  const [isMinting, setIsMinting] = React.useState(false);
+  const { totalSupply, refetchTotalSupply } = useNftSupply();
   const { mintedCount, refetch: refetchMintCount } = useWalletMintCount(
     address,
     activeKey
   );
 
+  const {
+    mintNFT,
+    isEligible,
+    mintSuccess,
+    mintFailure,
+    mintError,
+    setMintSuccess,
+    setMintFailure,
+    setMintError,
+  } = useMintHandler();
+
+  const [isMinting, setIsMinting] = React.useState(false);
+  const [value, setValue] = React.useState<number | "">(1);
+
+  const eligible = isEligible(activeKey);
+  const quantity = value || 1;
+
   const handleMint = async () => {
     if (!activeKey) return;
 
-    const validations: { condition: boolean; message: string }[] = [
+    const validations = [
       {
-        condition: !isEligible,
+        condition: !eligible,
         message: "You are not eligible to mint in this phase.",
       },
       {
@@ -91,7 +92,6 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
       await refetchTotalSupply();
       await refetchMintCount();
     } catch (err: any) {
-      console.error(err);
       toast.error("Mint failed. Please try again.");
     } finally {
       setIsMinting(false);
@@ -104,25 +104,25 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
 
       <CounterInput
         value={value}
-        onChange={onValueChange}
+        onChange={setValue}
         phase={title as PhaseKey}
       />
 
       <div className="maingtd">
         <div className="innergtd">
           <p className="gtdpara">Start time</p>
-          <h6 className="gtdhead">{startTime}</h6>
+          <h6 className="gtdhead">{TBD_TEXT}</h6>
         </div>
         <div className="innergtd">
           <p className="gtdpara">Time remaining</p>
-          <h6 className="gtdhead">{timeRemaining}</h6>
+          <h6 className="gtdhead">{TBD_TEXT}</h6>
         </div>
       </div>
 
       {address ? (
         <>
           <p className="publicpara">
-            {isEligible
+            {eligible
               ? "You are eligible to Mint NFT"
               : "You are not eligible to Mint NFT"}
           </p>
@@ -133,6 +133,29 @@ const PhaseTab: React.FC<PhaseTabProps> = ({
       ) : (
         <WalletButton className="connectbtn" />
       )}
+
+      <DynamicModal
+        show={mintSuccess}
+        onHide={() => setMintSuccess(false)}
+        type="success"
+        mintedId={
+          value && value > 1
+            ? Array.from(
+                { length: value },
+                (_, i) => totalSupply - value + i + 1
+              ).join(", ")
+            : `${totalSupply}`
+        }
+      />
+      <DynamicModal
+        show={mintFailure}
+        type="failure"
+        onHide={() => {
+          setMintFailure(false);
+          setMintError(null);
+        }}
+        errorMessage={mintError}
+      />
     </div>
   );
 };

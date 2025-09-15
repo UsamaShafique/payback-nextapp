@@ -18,7 +18,7 @@ const DynamicModal: FC<DynamicModalProps> = ({
   mintedId,
 }) => {
   const isSuccess = type === "success";
-  const mintedIds = mintedId?.split(",") || [];
+  const mintedIds = mintedId ? mintedId.split(",").map((id) => id.trim()) : [];
 
   return (
     <Modal show={show} onHide={onHide} centered className="bannermodal">
@@ -86,21 +86,21 @@ const DynamicModal: FC<DynamicModalProps> = ({
                 {mintedIds.map((id) => `#${id.trim()}`).join(", ")}
               </p>
               <div className="modalbtns">
-                <a
-                  href={
-                    mintedIds[0]
-                      ? getTokenExplorerUrl(mintedIds[0].trim())
-                      : "#"
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="innerbtn"
-                  style={{ textDecoration: "none" }}
-                >
-                  View explorer
-                </a>
+                {mintedIds.length > 0 && (
+                  <a
+                    href={getTokenExplorerUrl(mintedIds[0])}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="innerbtn"
+                    style={{ textDecoration: "none" }}
+                  >
+                    View explorer
+                  </a>
+                )}
 
-                <button className="innerbtn">View collection</button>
+                <button className="innerbtn" disabled>
+                  View collection
+                </button>
               </div>
             </>
           )}
