@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useConnect } from "wagmi";
+import { useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { WalletLogo } from "./icons/WalletLogo";
 import "../styles/walletModal.scss";
 interface WalletModalProps {
@@ -7,10 +7,7 @@ interface WalletModalProps {
   onClose: () => void;
 }
 
-export const WalletModal: React.FC<WalletModalProps> = ({
-  open,
-  onClose,
-}) => {
+export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
   const { connectors, connectAsync, error } = useConnect();
 
   const [loadingConnector, setLoadingConnector] = useState<string | null>(null);

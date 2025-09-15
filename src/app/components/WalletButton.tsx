@@ -7,12 +7,12 @@ interface WalletButtonProps {
 }
 
 export const WalletButton: React.FC<WalletButtonProps> = ({ className }) => {
-  const { isConnected } = useAccount();
+  const { address } = useAccount();
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      {!isConnected && (
+      {!address && (
         <button
           className={className || "connectbtn"}
           onClick={() => setOpen(true)}
