@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { Modal } from "react-bootstrap";
+import { getTokenExplorerUrl } from "../utils/helpers";
 
 type DynamicModalProps = {
   show: boolean;
@@ -85,7 +86,20 @@ const DynamicModal: FC<DynamicModalProps> = ({
                 {mintedIds.map((id) => `#${id.trim()}`).join(", ")}
               </p>
               <div className="modalbtns">
-                <button className="innerbtn">View explorer</button>
+                <a
+                  href={
+                    mintedIds[0]
+                      ? getTokenExplorerUrl(mintedIds[0].trim())
+                      : "#"
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="innerbtn"
+                  style={{ textDecoration: "none" }}
+                >
+                  View explorer
+                </a>
+
                 <button className="innerbtn">View collection</button>
               </div>
             </>

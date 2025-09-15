@@ -69,3 +69,8 @@ export const parseMintError = (err: any): string => {
     ? "Transaction failed. Please check your wallet or try again."
     : rawMessage;
 };
+
+
+const EXPLORER_BASE = "https://sepolia.etherscan.io";
+export const getTokenExplorerUrl = (tokenId: string) =>
+  `${EXPLORER_BASE}/token/${MintNFTContract}?a=${tokenId}`;
