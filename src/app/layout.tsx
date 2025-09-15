@@ -4,10 +4,10 @@ import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import { type ReactNode } from "react";
 import { cookieToInitialState } from "wagmi";
-import { config } from "../wagmi"; // use this instead of getConfig()
+import { config } from "../wagmi"; 
 import { Providers } from "./providers";
 import Script from "next/script";
-import { Toaster } from "react-hot-toast"; // <--- import
+import { Toaster } from "react-hot-toast"; 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,7 @@ export default function RootLayout(props: { children: ReactNode }) {
       <body className={inter.className}>
         <Providers initialState={initialState}>
           {props.children}
-          <Toaster position="top-right" /> {/* <-- add this here */}
+          <Toaster position="top-right" /> 
         </Providers>
       </body>
       <Script

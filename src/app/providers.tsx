@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode, useState } from 'react'
 import { WagmiProvider, State } from 'wagmi'
 
-import { config } from '@/wagmi' // ✅ import the single config
+import { config } from '@/wagmi' 
 
 export function Providers(props: { children: ReactNode; initialState?: State }) {
   const [queryClient] = useState(() => new QueryClient())
