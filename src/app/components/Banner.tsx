@@ -57,7 +57,7 @@ const Banner: React.FC = () => {
           onSelect={(k) => k && setActiveKey(k as Phase)}
           className="bannertabs"
         >
-          {Object.values(PHASES).map((phase) => (
+          {Object?.values(PHASES)?.map((phase) => (
             <Tab key={phase} eventKey={phase} title={phase.toUpperCase()}>
               <PhaseTab title={phase} activeKey={activeKey as Phase} />
             </Tab>
