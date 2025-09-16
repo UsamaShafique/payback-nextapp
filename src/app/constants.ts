@@ -38,6 +38,7 @@ export const CONTRACT_FUNCTIONS = {
 } as const;
 
 export const EXPLORER_BASE = "https://sepolia.etherscan.io";
+export const TBD_TEXT = "TBD";
 
 export const MAX_QUANTITY_PER_PHASE = {
   gtd: 1,

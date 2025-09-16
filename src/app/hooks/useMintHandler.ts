@@ -12,7 +12,7 @@ import proofsFCFSJson from "../utils/Proofs-FCFS.json";
 type ProofsType = Record<string, { proof: string[] }>;
 
 export const useMintHandler = () => {
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const { presaleMint, publicMint } = useMintNFTWrite();
 
   const [mintSuccess, setMintSuccess] = useState(false);
@@ -34,7 +34,7 @@ export const useMintHandler = () => {
   };
 
   const isEligible = (phase: Phase) => {
-    if (!isConnected || !address) return false;
+    if (!address) return false;
     return eligibilityMap[phase];
   };
 
@@ -79,7 +79,7 @@ export const useMintHandler = () => {
   };
 
   const mintNFT = async (phase: Phase, quantity: number) => {
-    if (!isConnected || !address) throw new Error("Wallet not connected");
+    if (!address) throw new Error("Wallet not connected");
     if (!isEligible(phase)) throw new Error(`Wallet not eligible for ${phase}`);
 
     try {
