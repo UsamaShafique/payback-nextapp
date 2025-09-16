@@ -18,7 +18,7 @@ const DynamicModal: FC<DynamicModalProps> = ({
   mintedId,
 }) => {
   const isSuccess = type === "success";
-  const mintedIds = mintedId ? mintedId.split(",").map((id) => id.trim()) : [];
+  const mintedIds = mintedId ? mintedId?.split(",")?.map((id) => id.trim()) : [];
 
   return (
     <Modal show={show} onHide={onHide} centered className="bannermodal">
@@ -83,10 +83,10 @@ const DynamicModal: FC<DynamicModalProps> = ({
           {isSuccess && (
             <>
               <p className="modalpara">
-                {mintedIds.map((id) => `#${id.trim()}`).join(", ")}
+                {mintedIds?.map((id) => `#${id?.trim()}`)?.join(", ")}
               </p>
               <div className="modalbtns">
-                {mintedIds.length > 0 && (
+                {mintedIds?.length > 0 && (
                   <a
                     href={getTokenExplorerUrl(mintedIds[0])}
                     target="_blank"
