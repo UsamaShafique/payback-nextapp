@@ -1,407 +1,149 @@
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { PHASES, Phase, PHASE_DURATIONS, STORAGE_KEYS } from "../constants";
-// import { usePhaseMintedCount, usePhaseMaxSupply } from "./usePhaseMintedCount";
-
-// interface PhaseData {
-//   minted: number;
-//   maxSupply: number;
-//   effectiveSupply: number;
-//   remainingSeconds: number;
-//   status: "upcoming" | "active" | "expired";
-// }
-
-// export const useGlobalPhaseState = () => {
-//   const [phases, setPhases] = useState<Record<Phase, PhaseData>>({
-//     gtd: {
-//       minted: 0,
-//       maxSupply: 0,
-//       effectiveSupply: 0,
-//       remainingSeconds: 0,
-//       status: "upcoming",
-//     },
-//     fcfs: {
-//       minted: 0,
-//       maxSupply: 0,
-//       effectiveSupply: 0,
-//       remainingSeconds: 0,
-//       status: "upcoming",
-//     },
-//     public: {
-//       minted: 0,
-//       maxSupply: 0,
-//       effectiveSupply: 0,
-//       remainingSeconds: 0,
-//       status: "upcoming",
-//     },
-//   });
-
-//   const gtd = usePhaseMintedCount("gtd");
-//   const fcfs = usePhaseMintedCount("fcfs");
-//   const pub = usePhaseMintedCount("public");
-
-//   const gtdMax = usePhaseMaxSupply("gtd");
-//   const fcfsMax = usePhaseMaxSupply("fcfs");
-//   const pubMax = usePhaseMaxSupply("public");
-
-//   useEffect(() => {
-//     let startTime =
-//       parseInt(localStorage.getItem(STORAGE_KEYS.MINT_START) || "0", 10) ||
-//       Date.now();
-//     localStorage.setItem(STORAGE_KEYS.MINT_START, startTime.toString());
-
-//     const updatePhases = () => {
-//       const now = Date.now();
-//       let cursor = startTime;
-
-//       const newData: Record<Phase, PhaseData> = {} as Record<Phase, PhaseData>;
-
-//       const initial: Record<Phase, { minted: number; maxSupply: number }> = {
-//         gtd: { minted: gtd.phaseMinted, maxSupply: gtdMax.phaseMaxSupply },
-//         fcfs: { minted: fcfs.phaseMinted, maxSupply: fcfsMax.phaseMaxSupply },
-//         public: { minted: pub.phaseMinted, maxSupply: pubMax.phaseMaxSupply },
-//       };
-
-//       (Object.values(PHASES) as Phase[]).forEach((phase) => {
-//         const duration = PHASE_DURATIONS[phase] * 1000;
-//         const start = cursor;
-//         const end = cursor + duration;
-
-//         let status: PhaseData["status"] =
-//           now < start ? "upcoming" : now < end ? "active" : "expired";
-//         const remainingSeconds =
-//           status === "upcoming"
-//             ? Math.floor((start - now) / 1000)
-//             : status === "active"
-//               ? Math.floor((end - now) / 1000)
-//               : 0;
-
-//         newData[phase] = {
-//           minted: initial[phase].minted,
-//           maxSupply: initial[phase].maxSupply,
-//           effectiveSupply: initial[phase].maxSupply,
-//           remainingSeconds,
-//           status,
-//         };
-
-//         cursor = end;
-//       });
-
-//       const gtdLeftover = Math.max(
-//         0,
-//         newData.gtd.maxSupply - newData.gtd.minted
-//       );
-//       newData.fcfs.effectiveSupply += gtdLeftover;
-
-//       const totalPublicMax = pubMax.phaseMaxSupply;
-//       newData.public.effectiveSupply = Math.max(
-//         0,
-//         totalPublicMax - (newData.gtd.minted + newData.fcfs.minted + newData.public.minted)
-//       );
-
-//       setPhases(newData);
-//     };
-
-//     updatePhases();
-//     const interval = setInterval(updatePhases, 1000);
-//     return () => clearInterval(interval);
-//   }, [
-//     gtd.phaseMinted,
-//     fcfs.phaseMinted,
-//     pub.phaseMinted,
-//     gtdMax.phaseMaxSupply,
-//     fcfsMax.phaseMaxSupply,
-//     pubMax.phaseMaxSupply,
-//   ]);
-
-//   const formatTime = (seconds: number) => {
-//     const m = Math.floor(seconds / 60);
-//     const s = seconds % 60;
-//     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-//   };
-
-//   return { phases, formatTime };
-// };
-
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { PHASES, Phase, PHASE_DURATIONS, STORAGE_KEYS } from "../constants";
-// import { usePhaseMintedCount, usePhaseMaxSupply } from "./usePhaseMintedCount";
-
-// interface PhaseData {
-//   minted: number;
-//   maxSupply: number;
-//   effectiveSupply: number;
-//   remainingSeconds: number;
-//   status: "upcoming" | "active" | "expired";
-// }
-
-// export const useGlobalPhaseState = () => {
-//   const [phases, setPhases] = useState<Record<Phase, PhaseData>>({
-//     gtd: {
-//       minted: 0,
-//       maxSupply: 0,
-//       effectiveSupply: 0,
-//       remainingSeconds: 0,
-//       status: "upcoming",
-//     },
-//     fcfs: {
-//       minted: 0,
-//       maxSupply: 0,
-//       effectiveSupply: 0,
-//       remainingSeconds: 0,
-//       status: "upcoming",
-//     },
-//     public: {
-//       minted: 0,
-//       maxSupply: 0,
-//       effectiveSupply: 0,
-//       remainingSeconds: 0,
-//       status: "upcoming",
-//     },
-//   });
-
-//   const gtd = usePhaseMintedCount("gtd");
-//   const fcfs = usePhaseMintedCount("fcfs");
-//   const pub = usePhaseMintedCount("public");
-
-//   const gtdMax = usePhaseMaxSupply("gtd");
-//   const fcfsMax = usePhaseMaxSupply("fcfs");
-//   const pubMax = usePhaseMaxSupply("public");
-
-//   useEffect(() => {
-//     let startTime =
-//       parseInt(localStorage.getItem(STORAGE_KEYS.MINT_START) || "0", 10) ||
-//       Date.now();
-//     localStorage.setItem(STORAGE_KEYS.MINT_START, startTime.toString());
-
-//     const updatePhases = () => {
-//       const now = Date.now();
-//       let cursor = startTime;
-
-//       const newData: Record<Phase, PhaseData> = {} as Record<Phase, PhaseData>;
-
-//       const phaseInfo: Record<Phase, { minted: number; maxSupply: number }> = {
-//         gtd: { minted: gtd.phaseMinted, maxSupply: gtdMax.phaseMaxSupply },
-//         fcfs: { minted: fcfs.phaseMinted, maxSupply: fcfsMax.phaseMaxSupply },
-//         public: { minted: pub.phaseMinted, maxSupply: pubMax.phaseMaxSupply },
-//       };
-
-//       const phaseOrder: Phase[] = ["gtd", "fcfs", "public"];
-//       const phaseTimings: Record<Phase, { start: number; end: number }> = {} as any;
-
-//       phaseOrder.forEach((phase) => {
-//         const duration = PHASE_DURATIONS[phase] * 1000;
-//         const start = cursor;
-//         const end = cursor + duration;
-
-//         phaseTimings[phase] = { start, end };
-
-//         let status: PhaseData["status"] =
-//           now < start ? "upcoming" : now < end ? "active" : "expired";
-
-//         const remainingSeconds =
-//           status === "upcoming"
-//             ? Math.floor((start - now) / 1000)
-//             : status === "active"
-//               ? Math.floor((end - now) / 1000)
-//               : 0;
-
-//         newData[phase] = {
-//           minted: phaseInfo[phase].minted,
-//           maxSupply: phaseInfo[phase].maxSupply,
-//           effectiveSupply: phaseInfo[phase].maxSupply, // Initial value, will be adjusted below
-//           remainingSeconds,
-//           status,
-//         };
-
-//         cursor = end;
-//       });
-
-//       newData.gtd.effectiveSupply = newData.gtd.maxSupply;
-
-//       if (newData.gtd.status === "expired") {
-//         const gtdLeftover = Math.max(0, newData.gtd.maxSupply - newData.gtd.minted);
-//         newData.fcfs.effectiveSupply = newData.fcfs.maxSupply + gtdLeftover;
-//       } else {
-//         newData.fcfs.effectiveSupply = newData.fcfs.maxSupply;
-//       }
-
-//       if (newData.gtd.status === "expired" && newData.fcfs.status === "expired") {
-//         const gtdLeftover = Math.max(0, newData.gtd.maxSupply - newData.gtd.minted);
-//         const fcfsLeftover = Math.max(0, (newData.fcfs.maxSupply + gtdLeftover) - newData.fcfs.minted);
-//         newData.public.effectiveSupply =  newData.public.maxSupply + fcfsLeftover;
-//       } else {
-//         newData.public.effectiveSupply = newData.public.maxSupply;
-//       }
-
-//       setPhases(newData);
-//     };
-
-//     updatePhases();
-//     const interval = setInterval(updatePhases, 1000);
-//     return () => clearInterval(interval);
-//   }, [
-//     gtd.phaseMinted,
-//     fcfs.phaseMinted,
-//     pub.phaseMinted,
-//     gtdMax.phaseMaxSupply,
-//     fcfsMax.phaseMaxSupply,
-//     pubMax.phaseMaxSupply,
-//   ]);
-
-//   const formatTime = (seconds: number) => {
-//     const m = Math.floor(seconds / 60);
-//     const s = seconds % 60;
-//     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-//   };
-
-//   return { phases, formatTime };
-// };
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useReadContracts } from "wagmi";
 import {
-  TOTAL_COLLECTION_SIZE,
   Phase,
   PHASE_DURATIONS,
   STORAGE_KEYS,
+  PHASE_ORDER,
+  MintNFTContract,
+  CONTRACT_FUNCTIONS,
+  PHASE_STATUSES,
 } from "../constants";
-import {
-  usePhaseMintedCount,
-  usePhaseMaxSupply,
-} from "./usePhaseMintedCount";
-import { useNftSupply } from "./useReadContract";
+import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
+
+const abi = mintNftsAbi as any;
 
 interface PhaseData {
   minted: number;
   maxSupply: number;
-  effectiveSupply: number;
   remainingSeconds: number;
-  status: "upcoming" | "active" | "expired";
+  status: (typeof PHASE_STATUSES)[number];
 }
-
 export const useGlobalPhaseState = () => {
-  const [phases, setPhases] = useState<Record<Phase, PhaseData>>({
-    gtd: {
-      minted: 0,
-      maxSupply: 0,
-      effectiveSupply: 0,
-      remainingSeconds: 0,
-      status: "upcoming",
-    },
-    fcfs: {
-      minted: 0,
-      maxSupply: 0,
-      effectiveSupply: 0,
-      remainingSeconds: 0,
-      status: "upcoming",
-    },
-    public: {
-      minted: 0,
-      maxSupply: 0,
-      effectiveSupply: 0,
-      remainingSeconds: 0,
-      status: "upcoming",
-    },
+  const [timerState, setTimerState] = useState({ tick: 0 });
+
+  const { data, refetch, isLoading } = useReadContracts({
+    contracts: PHASE_ORDER.flatMap((phase) => {
+      const isPublicPhase = phase === "public";
+      return [
+        {
+          address: MintNFTContract,
+          abi,
+          functionName: isPublicPhase
+            ? CONTRACT_FUNCTIONS.PUBLIC_MINTED_COUNT
+            : phase === "gtd"
+              ? CONTRACT_FUNCTIONS.GTD_MINTED_COUNT
+              : CONTRACT_FUNCTIONS.FCFS_MINTED_COUNT,
+        },
+        {
+          address: MintNFTContract,
+          abi,
+          functionName: isPublicPhase
+            ? CONTRACT_FUNCTIONS.PUBLIC_MAX_SUPPLY
+            : phase === "gtd"
+              ? CONTRACT_FUNCTIONS.GTD_MAX_SUPPLY
+              : CONTRACT_FUNCTIONS.FCFS_MAX_SUPPLY,
+        },
+      ];
+    }),
   });
 
-  const gtd = usePhaseMintedCount("gtd");
-  const fcfs = usePhaseMintedCount("fcfs");
-  const pub = usePhaseMintedCount("public");
-  const gtdMax = usePhaseMaxSupply("gtd");
-  const fcfsMax = usePhaseMaxSupply("fcfs");
-  const pubMax = usePhaseMaxSupply("public");
-  const { totalSupply } = useNftSupply();
+  const contractData = useMemo(() => {
+    if (!data)
+      return {} as Record<Phase, { minted: number; maxSupply: number }>;
+    const result: Record<Phase, { minted: number; maxSupply: number }> =
+      {} as Record<Phase, { minted: number; maxSupply: number }>;
 
-  useEffect(() => {
-    const mintStartTime = localStorage.getItem(STORAGE_KEYS.MINT_START);
-    const startTime = mintStartTime ? parseInt(mintStartTime, 10) : Date.now();
-    if (!mintStartTime) {
+    for (let i = 0; i < PHASE_ORDER.length; i++) {
+      const phase = PHASE_ORDER[i];
+      const mintedIndex = i * 2;
+      const maxSupplyIndex = i * 2 + 1;
+
+      const mintedResult = data[mintedIndex]?.result;
+      const maxSupplyResult = data[maxSupplyIndex]?.result;
+
+      result[phase] = {
+        minted: typeof mintedResult === "bigint" ? Number(mintedResult) : 0,
+        maxSupply:
+          typeof maxSupplyResult === "bigint" ? Number(maxSupplyResult) : 0,
+      };
+    }
+    return result;
+  }, [data]);
+
+  const phases = useMemo(() => {
+    const stored = localStorage.getItem(STORAGE_KEYS.MINT_START);
+    const startTime = stored ? parseInt(stored, 10) : Date.now();
+
+    if (!stored) {
       localStorage.setItem(STORAGE_KEYS.MINT_START, startTime.toString());
     }
 
-    const updatePhases = () => {
-      const now = Date.now();
-      let cursor = startTime;
-      const newData: Record<Phase, PhaseData> = {} as Record<Phase, PhaseData>;
+    const now = Date.now();
+    const result: Record<Phase, PhaseData> = {} as Record<Phase, PhaseData>;
+    let phaseStart = startTime;
 
-      const phaseOrder: Phase[] = ["gtd", "fcfs", "public"];
-      
-      phaseOrder.forEach((phase) => {
-        const duration = PHASE_DURATIONS[phase] * 1000;
-        const start = cursor;
-        const end = cursor + duration;
+    PHASE_ORDER.forEach((phase) => {
+      const duration = PHASE_DURATIONS[phase] * 1000;
+      const phaseEnd = phaseStart + duration;
 
-        const status = now < start ? "upcoming" : now < end ? "active" : "expired";
-        const remainingSeconds = status === "upcoming" ? Math.floor((start - now) / 1000) : status === "active" ? Math.floor((end - now) / 1000) : 0;
+      let status: (typeof PHASE_STATUSES)[number];
+      let remainingSeconds = 0;
 
-        newData[phase] = {
-          minted: 0,
-          maxSupply: 0,
-          effectiveSupply: 0,
-          remainingSeconds,
-          status,
-        };
-        cursor = end;
-      });
-
-      // Update minted and max supply from on-chain data
-      newData.gtd.minted = gtd.phaseMinted;
-      newData.gtd.maxSupply = gtdMax.phaseMaxSupply;
-      newData.fcfs.minted = fcfs.phaseMinted;
-      newData.fcfs.maxSupply = fcfsMax.phaseMaxSupply;
-      newData.public.minted = pub.phaseMinted;
-      newData.public.maxSupply = pubMax.phaseMaxSupply;
-
-      // Apply carry-over logic for GTD and FCFS
-      newData.gtd.effectiveSupply = newData.gtd.maxSupply;
-      if (newData.gtd.status === "expired") {
-        const gtdLeftover = Math.max(0, newData.gtd.maxSupply - newData.gtd.minted);
-        newData.fcfs.effectiveSupply = newData.fcfs.maxSupply + gtdLeftover;
+      if (now < phaseStart) {
+        status = PHASE_STATUSES[0];
+        remainingSeconds = Math.floor((phaseStart - now) / 1000);
+      } else if (now < phaseEnd) {
+        status = PHASE_STATUSES[1];
+        remainingSeconds = Math.floor((phaseEnd - now) / 1000);
       } else {
-        newData.fcfs.effectiveSupply = newData.fcfs.maxSupply;
+        status = PHASE_STATUSES[2];
       }
 
-      // **Critical fix for public phase display**
-      if (newData.public.status === "active") {
-        // Public phase is running, display total NFTs minted vs. total collection size
-        newData.public.effectiveSupply = TOTAL_COLLECTION_SIZE;
-        newData.public.minted = totalSupply ?? 0;
-      } else if (newData.public.status === "expired") {
-        // Public phase has ended, show the final count
-        newData.public.effectiveSupply = TOTAL_COLLECTION_SIZE;
-        newData.public.minted = totalSupply ?? 0;
-      } else {
-        // Public phase is upcoming, hide the display
-        newData.public.effectiveSupply = 0;
-        newData.public.minted = 0;
-      }
-      
-      setPhases(newData);
-    };
+      result[phase] = {
+        ...contractData[phase],
+        remainingSeconds: Math.max(0, remainingSeconds),
+        status,
+      };
 
-    updatePhases();
-    const interval = setInterval(updatePhases, 1000);
+      phaseStart = phaseEnd;
+    });
+
+    return result;
+  }, [timerState.tick, contractData]);
+
+  useEffect(() => {
+    const currentActivePhase = PHASE_ORDER.find(
+      (phase) => phases[phase].status === PHASE_STATUSES[1]
+    );
+
+    if (!currentActivePhase) return;
+
+    const remainingTime = phases[currentActivePhase].remainingSeconds * 1000;
+    if (remainingTime <= 0) return;
+
+    const timeout = setTimeout(() => {
+      refetch();
+    }, remainingTime);
+
+    return () => clearTimeout(timeout);
+  }, [phases, refetch]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimerState((prev) => ({ tick: prev.tick + 1 }));
+    }, 1000);
+
     return () => clearInterval(interval);
-  }, [
-    gtd.phaseMinted,
-    fcfs.phaseMinted,
-    pub.phaseMinted,
-    gtdMax.phaseMaxSupply,
-    fcfsMax.phaseMaxSupply,
-    pubMax.phaseMaxSupply,
-    totalSupply
-  ]);
+  }, []);
 
   const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  return { phases, formatTime };
+  return { phases, formatTime, isLoading };
 };
