@@ -1,19 +1,19 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useReadContracts } from "wagmi";
 import {
   Phase,
-  PHASE_DURATIONS,
-  STORAGE_KEYS,
   PHASE_ORDER,
   MintNFTContract,
   CONTRACT_FUNCTIONS,
   PHASE_STATUSES,
 } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
+import { usePhaseTimes, PhaseTimeData } from "./usePhaseTimes";
+import { Abi } from "viem";
 
-const abi = mintNftsAbi as any;
+const abi: Abi = mintNftsAbi as Abi;
 
 interface PhaseData {
   minted: number;
@@ -21,33 +21,38 @@ interface PhaseData {
   remainingSeconds: number;
   status: (typeof PHASE_STATUSES)[number];
 }
+
 export const useGlobalPhaseState = () => {
-  const [timerState, setTimerState] = useState({ tick: 0 });
+  const contractsToRead = PHASE_ORDER.flatMap((phase) => {
+    const keys = Object.keys(CONTRACT_FUNCTIONS) as Array<
+      keyof typeof CONTRACT_FUNCTIONS
+    >;
+    const mintedFnKey = keys.find((key) =>
+      key.toLowerCase().includes(`${phase}_minted`)
+    );
+    const maxSupplyFnKey = keys.find((key) =>
+      key.toLowerCase().includes(`${phase}_max_supply`)
+    );
+
+    const contracts = [];
+    if (mintedFnKey)
+      contracts.push({
+        address: MintNFTContract,
+        abi,
+        functionName: CONTRACT_FUNCTIONS[mintedFnKey],
+      });
+    if (maxSupplyFnKey)
+      contracts.push({
+        address: MintNFTContract,
+        abi,
+        functionName: CONTRACT_FUNCTIONS[maxSupplyFnKey],
+      });
+
+    return contracts;
+  });
 
   const { data, refetch, isLoading } = useReadContracts({
-    contracts: PHASE_ORDER.flatMap((phase) => {
-      const isPublicPhase = phase === "public";
-      return [
-        {
-          address: MintNFTContract,
-          abi,
-          functionName: isPublicPhase
-            ? CONTRACT_FUNCTIONS.PUBLIC_MINTED_COUNT
-            : phase === "gtd"
-              ? CONTRACT_FUNCTIONS.GTD_MINTED_COUNT
-              : CONTRACT_FUNCTIONS.FCFS_MINTED_COUNT,
-        },
-        {
-          address: MintNFTContract,
-          abi,
-          functionName: isPublicPhase
-            ? CONTRACT_FUNCTIONS.PUBLIC_MAX_SUPPLY
-            : phase === "gtd"
-              ? CONTRACT_FUNCTIONS.GTD_MAX_SUPPLY
-              : CONTRACT_FUNCTIONS.FCFS_MAX_SUPPLY,
-        },
-      ];
-    }),
+    contracts: contractsToRead,
   });
 
   const contractData = useMemo(() => {
@@ -56,88 +61,82 @@ export const useGlobalPhaseState = () => {
     const result: Record<Phase, { minted: number; maxSupply: number }> =
       {} as Record<Phase, { minted: number; maxSupply: number }>;
 
-    for (let i = 0; i < PHASE_ORDER.length; i++) {
-      const phase = PHASE_ORDER[i];
-      const mintedIndex = i * 2;
-      const maxSupplyIndex = i * 2 + 1;
-
-      const mintedResult = data[mintedIndex]?.result;
-      const maxSupplyResult = data[maxSupplyIndex]?.result;
+    PHASE_ORDER.forEach((phase, index) => {
+      const mintedResult = data[index * 2]?.result;
+      const maxSupplyResult = data[index * 2 + 1]?.result;
 
       result[phase] = {
         minted: typeof mintedResult === "bigint" ? Number(mintedResult) : 0,
         maxSupply:
           typeof maxSupplyResult === "bigint" ? Number(maxSupplyResult) : 0,
       };
-    }
-    return result;
-  }, [data]);
-
-  const phases = useMemo(() => {
-    const stored = localStorage.getItem(STORAGE_KEYS.MINT_START);
-    const startTime = stored ? parseInt(stored, 10) : Date.now();
-
-    if (!stored) {
-      localStorage.setItem(STORAGE_KEYS.MINT_START, startTime.toString());
-    }
-
-    const now = Date.now();
-    const result: Record<Phase, PhaseData> = {} as Record<Phase, PhaseData>;
-    let phaseStart = startTime;
-
-    PHASE_ORDER.forEach((phase) => {
-      const duration = PHASE_DURATIONS[phase] * 1000;
-      const phaseEnd = phaseStart + duration;
-
-      let status: (typeof PHASE_STATUSES)[number];
-      let remainingSeconds = 0;
-
-      if (now < phaseStart) {
-        status = PHASE_STATUSES[0];
-        remainingSeconds = Math.floor((phaseStart - now) / 1000);
-      } else if (now < phaseEnd) {
-        status = PHASE_STATUSES[1];
-        remainingSeconds = Math.floor((phaseEnd - now) / 1000);
-      } else {
-        status = PHASE_STATUSES[2];
-      }
-
-      result[phase] = {
-        ...contractData[phase],
-        remainingSeconds: Math.max(0, remainingSeconds),
-        status,
-      };
-
-      phaseStart = phaseEnd;
     });
 
     return result;
-  }, [timerState.tick, contractData]);
+  }, [data]);
 
-  useEffect(() => {
+  const { phaseTimes, refetchAll: refetchPhaseTimes } = usePhaseTimes();
+
+  const phases = useMemo(() => {
+    const result: Record<Phase, PhaseData> = {} as Record<Phase, PhaseData>;
+  
+    // Find first active phase based on time
+    const now = Math.floor(Date.now() / 1000);
+    let activePhaseFound = false;
+  
+    PHASE_ORDER.forEach((phase, index) => {
+      const timeData: PhaseTimeData = phaseTimes[phase] || {
+        endTime: 0,
+        remainingSeconds: 0,
+        status: "upcoming",
+      };
+  
+      const supplyData = contractData[phase];
+      const soldOut = supplyData ? supplyData.minted >= supplyData.maxSupply : false;
+  
+      let status: PhaseData["status"] = "upcoming";
+      let remainingSeconds = 0;
+  
+      if (soldOut) {
+        status = "expired";
+      } else if (!activePhaseFound) {
+        // If phase has started and not ended → mark as active
+        if (timeData.remainingSeconds > 0 && timeData.status === "active") {
+          status = "active";
+          remainingSeconds = timeData.remainingSeconds;
+          activePhaseFound = true; // Only one active phase
+        } else if (timeData.status === "expired") {
+          status = "expired";
+        } else {
+          status = "upcoming";
+        }
+      } else {
+        // Remaining phases after the active one are always upcoming unless sold out
+        status = "upcoming";
+      }
+  
+      result[phase] = {
+        ...supplyData,
+        remainingSeconds,
+        status,
+      };
+    });
+  
+    return result;
+  }, [contractData, phaseTimes]);
+  
+  useMemo(() => {
     const currentActivePhase = PHASE_ORDER.find(
-      (phase) => phases[phase].status === PHASE_STATUSES[1]
+      (phase) => phases[phase].status === "active"
     );
-
     if (!currentActivePhase) return;
 
     const remainingTime = phases[currentActivePhase].remainingSeconds * 1000;
-    if (remainingTime <= 0) return;
-
-    const timeout = setTimeout(() => {
+    if (remainingTime <= 0) {
       refetch();
-    }, remainingTime);
-
-    return () => clearTimeout(timeout);
-  }, [phases, refetch]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimerState((prev) => ({ tick: prev.tick + 1 }));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+      refetchPhaseTimes();
+    }
+  }, [phases, refetch, refetchPhaseTimes]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);

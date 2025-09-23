@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import DynamicModal from "../DynamicModal";
 import { useMintHandler } from "@/app/hooks/useMintHandler";
 import { useGlobalPhaseState } from "@/app/hooks/useGlobalPhaseState";
+import PhaseTimer from "./PhaseTimer";
 
 interface PhaseTabProps {
   title: string;
@@ -33,8 +34,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
   const { currentPhase } = useMintNFT();
   const { totalSupply, refetchTotalSupply } = useNftSupply();
 
-  // ✅ now pulling everything from the global hook
-  const { phases, formatTime } = useGlobalPhaseState();
+  const { phases } = useGlobalPhaseState();
   const phaseState = phases[activeKey];
 
   const { mintedCount, refetch: refetchMintCount } = useWalletMintCount(
@@ -61,27 +61,22 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
 
   const isActive = phaseState?.status === "active";
   const isExpired = phaseState?.status === "expired";
-
   const handleMint = async () => {
     if (!activeKey) return;
+    const activePhaseKey = (Object.keys(phases) as Phase[]).find(
+      (key) => phases[key].status === "active"
+    );
+
     const validations = [
       {
         condition: !eligible,
         message: "You are not eligible to mint in this phase.",
       },
       {
-        condition:
-          currentPhase === 0 ||
-          PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] !== activeKey,
-        message: `Mint not available. Active sale: ${PHASE_LABELS[currentPhase]}`,
-      },
-      {
-        condition: !isActive,
-        message: "This phase is not active yet or has expired.",
-      },
-      {
-        condition: isExpired,
-        message: "This phase has expired. Please wait for the next sale.",
+        condition: !phaseState || phaseState.status !== "active",
+        message: `Mint not available. Active sale: ${
+          activePhaseKey ? activePhaseKey.toUpperCase() : "None"
+        }`,
       },
       {
         condition: !balanceData || balanceData.value === 0n,
@@ -129,14 +124,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
           <h6 className="gtdhead">{phaseState?.status}</h6>
         </div>
 
-        <div className="innergtd">
-          <p className="gtdpara">Time remaining</p>
-          <h6 className="gtdhead">
-            {phaseState?.status === "active"
-              ? formatTime(phaseState.remainingSeconds)
-              : "--:--"}
-          </h6>
-        </div>
+        <PhaseTimer activeKey={activeKey} />
 
         <div className="innergtd">
           <p className="gtdpara">Phase Supply</p>
