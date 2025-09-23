@@ -9,6 +9,7 @@ import {
   CONTRACT_FUNCTIONS,
   PhaseStatus,
   PHASE_STATUSES,
+  PHASE_BASE_ID,
 } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
 import { usePhaseTimes, PhaseTimeData } from "./usePhaseTimes";
@@ -26,6 +27,15 @@ interface PhaseData {
 }
 
 export const useGlobalPhaseState = () => {
+  const MAX_SUPPLY_FUNCTIONS: Record<
+    Phase,
+    { fnName: string; hasArgs: boolean }
+  > = {
+    gtd: { fnName: CONTRACT_FUNCTIONS.GTD_MAX_SUPPLY, hasArgs: false },
+    fcfs: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
+    public: { fnName: CONTRACT_FUNCTIONS.PUBLIC_MAX_SUPPLY, hasArgs: false },
+  };
+
   const contractsToRead = PHASE_ORDER.flatMap((phase) => {
     const keys = Object.keys(CONTRACT_FUNCTIONS) as Array<
       keyof typeof CONTRACT_FUNCTIONS
@@ -33,23 +43,25 @@ export const useGlobalPhaseState = () => {
     const mintedFnKey = keys.find((key) =>
       key.toLowerCase().includes(`${phase}_minted`)
     );
-    const maxSupplyFnKey = keys.find((key) =>
-      key.toLowerCase().includes(`${phase}_max_supply`)
-    );
 
     const contracts = [];
-    if (mintedFnKey)
+
+    if (mintedFnKey) {
       contracts.push({
         address: MintNFTContract,
         abi,
         functionName: CONTRACT_FUNCTIONS[mintedFnKey],
       });
-    if (maxSupplyFnKey)
-      contracts.push({
-        address: MintNFTContract,
-        abi,
-        functionName: CONTRACT_FUNCTIONS[maxSupplyFnKey],
-      });
+    }
+
+    const { fnName, hasArgs } = MAX_SUPPLY_FUNCTIONS[phase];
+
+    contracts.push({
+      address: MintNFTContract,
+      abi,
+      functionName: fnName,
+      args: hasArgs ? [PHASE_BASE_ID[phase]] : undefined,
+    });
 
     return contracts;
   });
@@ -68,11 +80,24 @@ export const useGlobalPhaseState = () => {
       const mintedResult = data[index * 2]?.result;
       const maxSupplyResult = data[index * 2 + 1]?.result;
 
-      result[phase] = {
-        minted: typeof mintedResult === "bigint" ? Number(mintedResult) : 0,
-        maxSupply:
-          typeof maxSupplyResult === "bigint" ? Number(maxSupplyResult) : 0,
-      };
+      const { fnName } = MAX_SUPPLY_FUNCTIONS[phase];
+
+      if (
+        fnName === CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY &&
+        Array.isArray(maxSupplyResult) &&
+        maxSupplyResult.length === 2
+      ) {
+        result[phase] = {
+          minted: Number(maxSupplyResult[1]),
+          maxSupply: Number(maxSupplyResult[0]),
+        };
+      } else {
+        result[phase] = {
+          minted: typeof mintedResult === "bigint" ? Number(mintedResult) : 0,
+          maxSupply:
+            typeof maxSupplyResult === "bigint" ? Number(maxSupplyResult) : 0,
+        };
+      }
     });
 
     return result;

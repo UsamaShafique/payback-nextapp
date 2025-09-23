@@ -728,6 +728,22 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "enum IPayback.SalePhase",
+        "name": "salePhase",
+        "type": "uint8"
+      }
+    ],
+    "name": "getRemainingAmount",
+    "outputs": [
+      { "internalType": "uint256", "name": "total", "type": "uint256" },
+      { "internalType": "uint256", "name": "remaining", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getRemainingSupply",
     "outputs": [

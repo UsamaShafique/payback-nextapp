@@ -1,5 +1,5 @@
 export const MintNFTContract: `0x${string}` =
-  "0x06D58b509c4ba18C7bfC14471869dB6C4463eC8A";
+  "0xC93CFa13c9030dc767C115A693eE88E97e3Cf1AB";
 
 export const TOTAL_COLLECTION_SIZE = 999;
 
@@ -46,6 +46,8 @@ export const CONTRACT_FUNCTIONS = {
   GTD_END_TIME: "gtdPhaseTime",
   FCFS_END_TIME: "fcfsPhaseTime",
   PUBLIC_END_TIME: "publicPhaseTime",
+  FCFS_REMAINING_SUPPLY: "getRemainingAmount", // ✅ add this
+
 } as const;
 
 export const EXPLORER_BASE = "https://sepolia.etherscan.io";
@@ -64,3 +66,9 @@ export type Phase = (typeof PHASES)[keyof typeof PHASES];
 export const PHASE_ORDER = ["gtd", "fcfs", "public"] as const;
 export const PHASE_STATUSES = ["upcoming", "active", "expired"] as const;
 export type PhaseStatus = (typeof PHASE_STATUSES)[number];
+
+export const PHASE_BASE_ID: Record<Phase, number> = {
+  gtd: 1,
+  fcfs: 2,
+  public: 3,
+};
