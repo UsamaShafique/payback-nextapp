@@ -46,7 +46,7 @@ export const CONTRACT_FUNCTIONS = {
   GTD_END_TIME: "gtdPhaseTime",
   FCFS_END_TIME: "fcfsPhaseTime",
   PUBLIC_END_TIME: "publicPhaseTime",
-  FCFS_REMAINING_SUPPLY: "getRemainingAmount", // ✅ add this
+  FCFS_REMAINING_SUPPLY: "getRemainingAmount",
 
 } as const;
 
