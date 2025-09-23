@@ -7,13 +7,10 @@ import { useAccount, useBalance } from "wagmi";
 import {
   MAX_QUANTITY_PER_PHASE,
   Phase,
-  PHASE_MAP,
   PhaseKey,
-  PHASE_LABELS,
 } from "@/app/constants";
 
 import {
-  useMintNFT,
   useNftSupply,
   useWalletMintCount,
 } from "@/app/hooks/useReadContract";
@@ -31,7 +28,6 @@ interface PhaseTabProps {
 const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
   const { address } = useAccount();
   const { data: balanceData } = useBalance({ address });
-  const { currentPhase } = useMintNFT();
   const { totalSupply, refetchTotalSupply } = useNftSupply();
 
   const { phases } = useGlobalPhaseState();

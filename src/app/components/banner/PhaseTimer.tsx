@@ -2,14 +2,15 @@
 
 import React from "react";
 import { useGlobalPhaseState } from "@/app/hooks/useGlobalPhaseState";
-import { Phase } from "@/app/constants";
+import { Phase, PHASE_STATUSES } from "@/app/constants";
+import { formatTime } from "@/app/utils/helpers";
 
 interface PhaseTimerProps {
   activeKey: Phase;
 }
 
 const PhaseTimer: React.FC<PhaseTimerProps> = ({ activeKey }) => {
-  const { phases, formatTime } = useGlobalPhaseState();
+  const { phases } = useGlobalPhaseState();
   const phaseState = phases[activeKey];
 
   if (!phaseState) return null;
@@ -18,7 +19,7 @@ const PhaseTimer: React.FC<PhaseTimerProps> = ({ activeKey }) => {
     <div className="innergtd">
       <p className="gtdpara">Time remaining</p>
       <h6 className="gtdhead">
-        {phaseState.status === "active"
+        {phaseState.status === PHASE_STATUSES[1]
           ? formatTime(phaseState.remainingSeconds)
           : "--:--"}
       </h6>

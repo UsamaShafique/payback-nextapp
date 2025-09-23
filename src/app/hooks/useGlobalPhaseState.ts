@@ -1,16 +1,19 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useReadContracts } from "wagmi";
 import {
   Phase,
   PHASE_ORDER,
   MintNFTContract,
   CONTRACT_FUNCTIONS,
+  PhaseStatus,
   PHASE_STATUSES,
 } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
 import { usePhaseTimes, PhaseTimeData } from "./usePhaseTimes";
+import { resolveStatus } from "../utils/helpers";
+
 import { Abi } from "viem";
 
 const abi: Abi = mintNftsAbi as Abi;
@@ -19,7 +22,7 @@ interface PhaseData {
   minted: number;
   maxSupply: number;
   remainingSeconds: number;
-  status: (typeof PHASE_STATUSES)[number];
+  status: PhaseStatus;
 }
 
 export const useGlobalPhaseState = () => {
@@ -79,55 +82,40 @@ export const useGlobalPhaseState = () => {
 
   const phases = useMemo(() => {
     const result: Record<Phase, PhaseData> = {} as Record<Phase, PhaseData>;
-  
-    // Find first active phase based on time
-    const now = Math.floor(Date.now() / 1000);
     let activePhaseFound = false;
-  
-    PHASE_ORDER.forEach((phase, index) => {
+
+    PHASE_ORDER.forEach((phase) => {
       const timeData: PhaseTimeData = phaseTimes[phase] || {
         endTime: 0,
         remainingSeconds: 0,
-        status: "upcoming",
+        status: PHASE_STATUSES[0],
       };
-  
+
       const supplyData = contractData[phase];
-      const soldOut = supplyData ? supplyData.minted >= supplyData.maxSupply : false;
-  
-      let status: PhaseData["status"] = "upcoming";
-      let remainingSeconds = 0;
-  
-      if (soldOut) {
-        status = "expired";
-      } else if (!activePhaseFound) {
-        // If phase has started and not ended → mark as active
-        if (timeData.remainingSeconds > 0 && timeData.status === "active") {
-          status = "active";
-          remainingSeconds = timeData.remainingSeconds;
-          activePhaseFound = true; // Only one active phase
-        } else if (timeData.status === "expired") {
-          status = "expired";
-        } else {
-          status = "upcoming";
-        }
-      } else {
-        // Remaining phases after the active one are always upcoming unless sold out
-        status = "upcoming";
+      const soldOut = supplyData
+        ? supplyData.minted >= supplyData.maxSupply
+        : false;
+
+      const status = resolveStatus(soldOut, activePhaseFound, timeData);
+
+      if (status === PHASE_STATUSES[1]) {
+        activePhaseFound = true;
       }
-  
+
       result[phase] = {
         ...supplyData,
-        remainingSeconds,
+        remainingSeconds:
+          status === PHASE_STATUSES[1] ? timeData.remainingSeconds : 0,
         status,
       };
     });
-  
+
     return result;
   }, [contractData, phaseTimes]);
-  
-  useMemo(() => {
+
+  useEffect(() => {
     const currentActivePhase = PHASE_ORDER.find(
-      (phase) => phases[phase].status === "active"
+      (phase) => phases[phase].status === PHASE_STATUSES[1]
     );
     if (!currentActivePhase) return;
 
@@ -138,11 +126,5 @@ export const useGlobalPhaseState = () => {
     }
   }, [phases, refetch, refetchPhaseTimes]);
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  };
-
-  return { phases, formatTime, isLoading };
+  return { phases, isLoading };
 };

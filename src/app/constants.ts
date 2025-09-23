@@ -1,7 +1,6 @@
 export const MintNFTContract: `0x${string}` =
   "0x626FbEF4A0477A97287eE3A3d91EC31a73965E5c";
 
-// Total collection size
 export const TOTAL_COLLECTION_SIZE = 999;
 
 export interface IPhases {
@@ -61,10 +60,6 @@ export const MAX_QUANTITY_PER_PHASE = {
 export type PhaseKey = keyof typeof MAX_QUANTITY_PER_PHASE;
 
 export type Phase = (typeof PHASES)[keyof typeof PHASES];
-
-export const STORAGE_KEYS = {
-  MINT_START: "mint_start_time",
-};
 
 export const PHASE_ORDER = ["gtd", "fcfs", "public"] as const;
 export const PHASE_STATUSES = ["upcoming", "active", "expired"] as const;
