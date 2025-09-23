@@ -1,5 +1,5 @@
 export const MintNFTContract: `0x${string}` =
-  "0x626FbEF4A0477A97287eE3A3d91EC31a73965E5c";
+  "0x06D58b509c4ba18C7bfC14471869dB6C4463eC8A";
 
 export const TOTAL_COLLECTION_SIZE = 999;
 

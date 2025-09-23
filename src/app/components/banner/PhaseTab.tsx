@@ -4,16 +4,9 @@ import React from "react";
 import CounterInput from "../banner/CounterInput";
 import { WalletButton } from "../../components/WalletButton";
 import { useAccount, useBalance } from "wagmi";
-import {
-  MAX_QUANTITY_PER_PHASE,
-  Phase,
-  PhaseKey,
-} from "@/app/constants";
+import { MAX_QUANTITY_PER_PHASE, Phase, PhaseKey } from "@/app/constants";
 
-import {
-  useNftSupply,
-  useWalletMintCount,
-} from "@/app/hooks/useReadContract";
+import { useNftSupply, useWalletMintCount } from "@/app/hooks/useReadContract";
 import toast from "react-hot-toast";
 import DynamicModal from "../DynamicModal";
 import { useMintHandler } from "@/app/hooks/useMintHandler";
@@ -70,10 +63,11 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
       },
       {
         condition: !phaseState || phaseState.status !== "active",
-        message: `Mint not available. Active sale: ${
-          activePhaseKey ? activePhaseKey.toUpperCase() : "None"
+        message: ` ${
+          activePhaseKey ? `Active sale: ${activePhaseKey.toUpperCase()}` : "There is no active sale at the moment."
         }`,
-      },
+      }
+      ,
       {
         condition: !balanceData || balanceData.value === 0n,
         message: "Insufficient balance!",
