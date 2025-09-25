@@ -15,13 +15,12 @@ const CounterInput: React.FC<CounterInputProps> = ({
   onChange,
   phase,
 }) => {
-  const min = 1;
+  const min = 0;
   const max = MAX_QUANTITY_PER_PHASE[phase];
   const isPublic = phase === PHASES.PUBLIC;
 
   const clamp = (val: number) => Math.min(Math.max(val, min), max);
   const safeValue = value === "" ? min : value;
-
   const decrease = () => {
     if (isPublic) onChange(clamp(safeValue - 1));
   };
@@ -32,12 +31,13 @@ const CounterInput: React.FC<CounterInputProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isPublic) return;
-    const num = parseInt(e.target.value, 10);
-    if (!isNaN(num)) {
-      onChange(clamp(num));
-    } else {
-      onChange(min);
+    const { value } = e.target;
+    if (value === "") {
+      onChange("");
+      return;
     }
+    const num = Number(value);
+    onChange(Number.isNaN(num) ? "" : clamp(num));
   };
 
   return (
@@ -66,5 +66,4 @@ const CounterInput: React.FC<CounterInputProps> = ({
     </div>
   );
 };
-
-export default CounterInput;
+export default React.memo(CounterInput);

@@ -46,7 +46,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
   const [value, setValue] = React.useState<number | "">(1);
 
   const eligible = isEligible(activeKey);
-  const quantity = value || 1;
+  const quantity = value === "" ? 0 : value;
 
   const isActive = phaseState?.status === "active";
   const isExpired = phaseState?.status === "expired";
@@ -64,10 +64,11 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
       {
         condition: !phaseState || phaseState.status !== "active",
         message: ` ${
-          activePhaseKey ? `Active sale: ${activePhaseKey.toUpperCase()}` : "There is no active sale at the moment."
+          activePhaseKey
+            ? `Active sale: ${activePhaseKey.toUpperCase()}`
+            : "There is no active sale at the moment."
         }`,
-      }
-      ,
+      },
       {
         condition: !balanceData || balanceData.value === 0n,
         message: "Insufficient balance!",
@@ -142,7 +143,11 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
             <p className="publicpara">This phase has not started yet.</p>
           )}
 
-          <button className="mintbtn" onClick={handleMint} disabled={isMinting}>
+          <button
+            className="mintbtn"
+            onClick={handleMint}
+            disabled={isMinting || quantity <= 0}
+          >
             {isMinting ? "Minting..." : "Mint now"}
           </button>
         </>
