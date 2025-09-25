@@ -46,7 +46,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
   const [value, setValue] = React.useState<number | "">(1);
 
   const eligible = isEligible(activeKey);
-  const quantity = value === "" ? 0 : value;
+  const quantity = value || 0;
 
   const isActive = phaseState?.status === "active";
   const isExpired = phaseState?.status === "expired";

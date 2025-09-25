@@ -32,12 +32,9 @@ const CounterInput: React.FC<CounterInputProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isPublic) return;
     const { value } = e.target;
-    if (value === "") {
-      onChange("");
-      return;
-    }
+
     const num = Number(value);
-    onChange(Number.isNaN(num) ? "" : clamp(num));
+    onChange(Number.isNaN(num) ? min : clamp(num));
   };
 
   return (
