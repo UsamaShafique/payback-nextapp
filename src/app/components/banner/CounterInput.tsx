@@ -1,13 +1,13 @@
 "use client";
 
-import React, { ChangeEvent } from "react";
+import React from "react";
 import { MinusIcon, PlusIcon } from "./Icons";
-import { MAX_QUANTITY_PER_PHASE, PhaseKey } from "@/app/constants";
+import { MAX_QUANTITY_PER_PHASE, Phase, PHASES } from "@/app/constants";
 
 interface CounterInputProps {
   value: number | "";
   onChange: (val: number | "") => void;
-  phase: PhaseKey;
+  phase: Phase;
 }
 
 const CounterInput: React.FC<CounterInputProps> = ({
@@ -15,41 +15,52 @@ const CounterInput: React.FC<CounterInputProps> = ({
   onChange,
   phase,
 }) => {
+  const min = 0;
   const max = MAX_QUANTITY_PER_PHASE[phase];
+  const isPublic = phase === PHASES.PUBLIC;
 
+  const clamp = (val: number) => Math.min(Math.max(val, min), max);
+  const safeValue = value === "" ? min : value;
   const decrease = () => {
-    if (typeof value === "number" && value > 1) onChange(value - 1);
+    if (isPublic) onChange(clamp(safeValue - 1));
   };
 
   const increase = () => {
-    if (typeof value === "number" && value < max) onChange(value + 1);
+    if (isPublic) onChange(clamp(safeValue + 1));
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    if (/^\d*$/.test(newValue)) {
-      const val = newValue === "" ? "" : parseInt(newValue, 10);
-      if (val === "" || val <= max) onChange(val);
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isPublic) return;
+    const { value } = e.target;
+
+    const num = Number(value);
+    onChange(Number.isNaN(num) ? min : clamp(num));
   };
 
   return (
     <div className="maininput">
-      <button className="signbutton" onClick={decrease}>
-        <MinusIcon />
-      </button>
+      {isPublic && (
+        <button className="signbutton" onClick={decrease}>
+          <MinusIcon />
+        </button>
+      )}
+
       <input
+        type="number"
         value={value}
         onChange={handleChange}
-        placeholder="1"
-        type="text"
+        min={min}
+        max={max}
+        readOnly={!isPublic}
         className="numberinput"
       />
-      <button className="signbutton" onClick={increase}>
-        <PlusIcon />
-      </button>
+
+      {isPublic && (
+        <button className="signbutton" onClick={increase}>
+          <PlusIcon />
+        </button>
+      )}
     </div>
   );
 };
-
-export default CounterInput;
+export default React.memo(CounterInput);

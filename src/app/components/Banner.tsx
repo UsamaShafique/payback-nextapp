@@ -22,7 +22,6 @@ const Banner: React.FC = () => {
   }, [currentPhase]);
 
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
-
   return (
     <section className="mainbanner">
       <img

@@ -5,6 +5,8 @@ import { formatEther } from "viem";
 import { config } from "../../wagmi";
 import { EXPLORER_BASE, MintNFTContract } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
+import { PhaseStatus } from "../constants";
+import { PhaseTimeData } from "../hooks/usePhaseTimes";
 
 export async function estimateGasFee(
   fnName: string,
@@ -72,3 +74,30 @@ export const parseMintError = (err: any): string => {
 
 export const getTokenExplorerUrl = (tokenId: string) =>
   `${EXPLORER_BASE}/token/${MintNFTContract}?a=${tokenId}`;
+
+export const resolveStatus = (
+  soldOut: boolean,
+  activePhaseFound: boolean,
+  timeData: PhaseTimeData
+): PhaseStatus => {
+  if (soldOut) return "expired";
+
+  if (!activePhaseFound) {
+    if (timeData.remainingSeconds > 0 && timeData.status === "active") {
+      return "active";
+    }
+    if (timeData.status === "expired") {
+      return "expired";
+    }
+  }
+
+  return "upcoming";
+};
+
+export const formatTime = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes.toString().padStart(2, "0")}:${secs
+    .toString()
+    .padStart(2, "0")}`;
+};

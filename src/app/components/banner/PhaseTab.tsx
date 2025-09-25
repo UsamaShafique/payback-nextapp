@@ -4,23 +4,14 @@ import React from "react";
 import CounterInput from "../banner/CounterInput";
 import { WalletButton } from "../../components/WalletButton";
 import { useAccount, useBalance } from "wagmi";
-import {
-  MAX_QUANTITY_PER_PHASE,
-  Phase,
-  PHASE_MAP,
-  PhaseKey,
-  PHASE_LABELS,
-  TBD_TEXT,
-} from "@/app/constants";
+import { MAX_QUANTITY_PER_PHASE, Phase, PhaseKey } from "@/app/constants";
 
-import {
-  useMintNFT,
-  useNftSupply,
-  useWalletMintCount,
-} from "@/app/hooks/useReadContract";
+import { useNftSupply, useWalletMintCount } from "@/app/hooks/useReadContract";
 import toast from "react-hot-toast";
 import DynamicModal from "../DynamicModal";
 import { useMintHandler } from "@/app/hooks/useMintHandler";
+import { useGlobalPhaseState } from "@/app/hooks/useGlobalPhaseState";
+import PhaseTimer from "./PhaseTimer";
 
 interface PhaseTabProps {
   title: string;
@@ -30,8 +21,11 @@ interface PhaseTabProps {
 const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
   const { address } = useAccount();
   const { data: balanceData } = useBalance({ address });
-  const { currentPhase } = useMintNFT();
   const { totalSupply, refetchTotalSupply } = useNftSupply();
+
+  const { phases } = useGlobalPhaseState();
+  const phaseState = phases[activeKey];
+
   const { mintedCount, refetch: refetchMintCount } = useWalletMintCount(
     address,
     activeKey
@@ -52,10 +46,15 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
   const [value, setValue] = React.useState<number | "">(1);
 
   const eligible = isEligible(activeKey);
-  const quantity = value || 1;
+  const quantity = value || 0;
 
+  const isActive = phaseState?.status === "active";
+  const isExpired = phaseState?.status === "expired";
   const handleMint = async () => {
     if (!activeKey) return;
+    const activePhaseKey = (Object.keys(phases) as Phase[]).find(
+      (key) => phases[key].status === "active"
+    );
 
     const validations = [
       {
@@ -63,10 +62,12 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
         message: "You are not eligible to mint in this phase.",
       },
       {
-        condition:
-          currentPhase === 0 ||
-          PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] !== activeKey,
-        message: `Mint not available. Active sale: ${PHASE_LABELS[currentPhase]}`,
+        condition: !phaseState || phaseState.status !== "active",
+        message: ` ${
+          activePhaseKey
+            ? `Active sale: ${activePhaseKey.toUpperCase()}`
+            : "There is no active sale at the moment."
+        }`,
       },
       {
         condition: !balanceData || balanceData.value === 0n,
@@ -110,23 +111,43 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
 
       <div className="maingtd">
         <div className="innergtd">
-          <p className="gtdpara">Start time</p>
-          <h6 className="gtdhead">{TBD_TEXT}</h6>
+          <p className="gtdpara">Status</p>
+          <h6 className="gtdhead">{phaseState?.status}</h6>
         </div>
+
+        <PhaseTimer activeKey={activeKey} />
+
         <div className="innergtd">
-          <p className="gtdpara">Time remaining</p>
-          <h6 className="gtdhead">{TBD_TEXT}</h6>
+          <p className="gtdpara">Phase Supply</p>
+          <h6 className="gtdhead">
+            {isActive || isExpired
+              ? `${phaseState?.minted ?? 0}/${phaseState?.maxSupply ?? 0}`
+              : "--/--"}
+          </h6>
         </div>
       </div>
 
       {address ? (
         <>
-          <p className="publicpara">
-            {eligible
-              ? "You are eligible to Mint NFT"
-              : "You are not eligible to Mint NFT"}
-          </p>
-          <button className="mintbtn" onClick={handleMint} disabled={isMinting}>
+          {isActive && (
+            <p className="publicpara">
+              {eligible
+                ? "You are eligible to Mint NFT"
+                : "You are not eligible to Mint NFT"}
+            </p>
+          )}
+
+          {isExpired && <p className="publicpara">This phase has expired.</p>}
+
+          {!isActive && !isExpired && (
+            <p className="publicpara">This phase has not started yet.</p>
+          )}
+
+          <button
+            className="mintbtn"
+            onClick={handleMint}
+            disabled={isMinting || quantity <= 0}
+          >
             {isMinting ? "Minting..." : "Mint now"}
           </button>
         </>
