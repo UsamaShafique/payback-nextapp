@@ -33,13 +33,11 @@ const Header: React.FC = () => {
           </a>
 
           <div className="d-none d-md-block">
-            {address ? (
+            {address && (
               <button className="disconnectbtn" onClick={() => disconnect()}>
                 Disconnect
               </button>
-            ) : (
-              ""
-            )}
+            ) }
           </div>
 
           <HamburgerIcon
