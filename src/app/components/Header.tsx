@@ -33,17 +33,15 @@ const Header: React.FC = () => {
           </a>
 
           <div className="d-none d-md-block">
-            {address ? (
+            {address && (
               <button className="disconnectbtn" onClick={() => disconnect()}>
                 Disconnect
               </button>
-            ) : (
-              <WalletButton className="connectbtn" />
-            )}
+            ) }
           </div>
 
           <HamburgerIcon
-            className="d-block d-md-none" 
+            className="d-block d-md-none"
             onClick={() => setShowSidebar(true)}
           />
         </div>

@@ -1,7 +1,9 @@
+"use client"
 import React, { useState } from "react";
 import { useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { WalletLogo } from "./icons/WalletLogo";
 import "../styles/walletModal.scss";
+import { Modal } from "react-bootstrap";
 interface WalletModalProps {
   open: boolean;
   onClose: () => void;
@@ -34,23 +36,11 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
   if (!open) return null;
 
   return (
-    <div
-      className="wallet-modal-overlay"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="wallet-modal-title"
-    >
-      <div className="wallet-modal" onClick={(e) => e.stopPropagation()}>
+    <Modal show={open} onHide={onClose} centered className="wallet-modal">
+      <Modal.Body>
         <h2 id="wallet-modal-title" className="wallet-modal-title">
           Connect Wallet
         </h2>
-
-        {(connectionError || error) && (
-          <div className="wallet-error" role="alert">
-            {connectionError || error?.message || "Connection failed"}
-          </div>
-        )}
 
         <div
           style={{
@@ -83,6 +73,12 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
           })}
         </div>
 
+        {(connectionError || error) && (
+          <div className="wallet-error" role="alert">
+            {connectionError || error?.message || "Connection failed"}
+          </div>
+        )}
+
         <button
           onClick={onClose}
           className="wallet-cancel"
@@ -90,7 +86,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
         >
           Cancel
         </button>
-      </div>
-    </div>
+        </Modal.Body>
+        </Modal>
   );
 };
