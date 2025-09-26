@@ -38,12 +38,12 @@ const Header: React.FC = () => {
                 Disconnect
               </button>
             ) : (
-              <WalletButton className="connectbtn" />
+              ""
             )}
           </div>
 
           <HamburgerIcon
-            className="d-block d-md-none" 
+            className="d-block d-md-none"
             onClick={() => setShowSidebar(true)}
           />
         </div>
