@@ -1,9 +1,10 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import { useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { WalletLogo } from "./icons/WalletLogo";
 import "../styles/walletModal.scss";
 import { Modal } from "react-bootstrap";
+import { useIsMobile } from "../hooks/useIsMobile";
 interface WalletModalProps {
   open: boolean;
   onClose: () => void;
@@ -32,6 +33,8 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
       setLoadingConnector(null);
     }
   };
+  const isMobile = useIsMobile();
+
 
   if (!open) return null;
 
@@ -50,27 +53,36 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
             gap: "0.75rem",
           }}
         >
-          {connectors.map((connector) => {
-            const isLoading = loadingConnector === connector.id;
+          {connectors
+            ?.filter(
+              (connector) =>
+                !(
+                  isMobile &&
+                  (connector.id === "io.metamask" ||
+                    connector.name === "MetaMask")
+                )
+            )
+            ?.map((connector) => {
+              const isLoading = loadingConnector === connector.id;
 
-            return (
-              <button
-                key={connector.id}
-                onClick={() => handleConnect(connector)}
-                disabled={!!loadingConnector}
-                className="wallet-option"
-                aria-label={`Connect ${connector.name} wallet`}
-              >
-                <WalletLogo name={connector.name} />
+              return (
+                <button
+                  key={connector.id}
+                  onClick={() => handleConnect(connector)}
+                  disabled={!!loadingConnector}
+                  className="wallet-option"
+                  aria-label={`Connect ${connector.name} wallet`}
+                >
+                  <WalletLogo name={connector.name} />
 
-                <span style={{ flex: 1 }}>
-                  {isLoading ? "Connecting..." : connector.name}
-                </span>
+                  <span style={{ flex: 1 }}>
+                    {isLoading ? "Connecting..." : connector.name}
+                  </span>
 
-                {isLoading && <div className="wallet-loading-spinner" />}
-              </button>
-            );
-          })}
+                  {isLoading && <div className="wallet-loading-spinner" />}
+                </button>
+              );
+            })}
         </div>
 
         {(connectionError || error) && (
@@ -86,7 +98,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
         >
           Cancel
         </button>
-        </Modal.Body>
-        </Modal>
+      </Modal.Body>
+    </Modal>
   );
 };

@@ -1,5 +1,5 @@
 export const MintNFTContract: `0x${string}` =
-  "0x15BF564C06b12Ad6CDF5b2d98452A2AdD288d8bc";
+  "0x16f82bC250B09642b7041DA1426fEA1479237D64";
 
 export const TOTAL_COLLECTION_SIZE = 999;
 
@@ -46,7 +46,10 @@ export const CONTRACT_FUNCTIONS = {
   GTD_END_TIME: "gtdPhaseTime",
   FCFS_END_TIME: "fcfsPhaseTime",
   PUBLIC_END_TIME: "publicPhaseTime",
+  GTD_REMAINING_SUPPLY: "getRemainingAmount",
   FCFS_REMAINING_SUPPLY: "getRemainingAmount",
+  PUBLIC_REMAINING_SUPPLY: "getRemainingAmount",
+
 
 } as const;
 

@@ -72,13 +72,11 @@ const Header: React.FC = () => {
         </Offcanvas.Body>
 
         <div className="endbutton">
-          {address ? (
+          {address && (
             <button className="disconnect" onClick={() => disconnect()}>
               Disconnect
             </button>
-          ) : (
-            <WalletButton className="connectbtn" />
-          )}
+          ) }
         </div>
       </Offcanvas>
     </>
