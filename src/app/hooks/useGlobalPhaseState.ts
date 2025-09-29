@@ -10,6 +10,7 @@ import {
   PhaseStatus,
   PHASE_STATUSES,
   PHASE_BASE_ID,
+  PHASES,
 } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
 import { usePhaseTimes, PhaseTimeData } from "./usePhaseTimes";
@@ -28,13 +29,13 @@ interface PhaseData {
 
 export const useGlobalPhaseState = () => {
   const MAX_SUPPLY_FUNCTIONS: Record<
-  Phase,
-  { fnName: string; hasArgs: boolean }
-> = {
-  gtd: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
-  fcfs: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
-  public: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
-};
+    Phase,
+    { fnName: string; hasArgs: boolean }
+  > = {
+    gtd: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
+    fcfs: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
+    public: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
+  };
 
   const contractsToRead = PHASE_ORDER.flatMap((phase) => {
     const keys = Object.keys(CONTRACT_FUNCTIONS) as Array<
@@ -70,7 +71,6 @@ export const useGlobalPhaseState = () => {
     contracts: contractsToRead,
   });
 
-  
   const contractData = useMemo(() => {
     if (!data)
       return {} as Record<Phase, { minted: number; maxSupply: number }>;
@@ -80,10 +80,7 @@ export const useGlobalPhaseState = () => {
     PHASE_ORDER.forEach((phase, index) => {
       const mintedResult = data[index * 2]?.result;
       const maxSupplyResult = data[index * 2 + 1]?.result;
-      if (
-        Array.isArray(maxSupplyResult) &&
-        maxSupplyResult.length === 2
-      ) {
+      if (Array.isArray(maxSupplyResult) && maxSupplyResult.length === 2) {
         result[phase] = {
           minted: Number(maxSupplyResult[1]),
           maxSupply: Number(maxSupplyResult[0]),
@@ -113,20 +110,20 @@ export const useGlobalPhaseState = () => {
       };
 
       const supplyData = contractData[phase];
-      const soldOut = supplyData
-        ? supplyData.minted >= supplyData.maxSupply
-        : false;
+      const soldOut =
+        supplyData?.minted >= supplyData?.maxSupply &&
+        supplyData?.maxSupply > 0;
 
-      const status = resolveStatus(soldOut, activePhaseFound, timeData);
-
-      if (status === PHASE_STATUSES[1]) {
-        activePhaseFound = true;
+      let status = resolveStatus(false, activePhaseFound, timeData);
+      if (status === PHASE_STATUSES[1]) activePhaseFound = true;
+      if (soldOut && phase === PHASES.PUBLIC) {
+        status = PHASE_STATUSES[2];
       }
-
+      const remainingSeconds =
+        soldOut && phase === PHASES.PUBLIC ? 0 : timeData.remainingSeconds;
       result[phase] = {
         ...supplyData,
-        remainingSeconds:
-          status === PHASE_STATUSES[1] ? timeData.remainingSeconds : 0,
+        remainingSeconds,
         status,
       };
     });
