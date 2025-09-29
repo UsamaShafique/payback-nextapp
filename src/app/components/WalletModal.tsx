@@ -33,9 +33,10 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
       setLoadingConnector(null);
     }
   };
+  const isMobile = useIsMobile();
+
 
   if (!open) return null;
-  const isMobile = useIsMobile();
 
   return (
     <Modal show={open} onHide={onClose} centered className="wallet-modal">
