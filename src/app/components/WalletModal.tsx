@@ -4,6 +4,7 @@ import { useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { WalletLogo } from "./icons/WalletLogo";
 import "../styles/walletModal.scss";
 import { Modal } from "react-bootstrap";
+import { useIsMobile } from "../hooks/useIsMobile";
 interface WalletModalProps {
   open: boolean;
   onClose: () => void;
@@ -34,8 +35,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
   };
 
   if (!open) return null;
-  const isMobile =
-    typeof window !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);
+  const isMobile = useIsMobile();
 
   return (
     <Modal show={open} onHide={onClose} centered className="wallet-modal">
