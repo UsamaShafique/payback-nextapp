@@ -7,6 +7,7 @@
     "type": "error"
   },
   { "inputs": [], "name": "AlreadyPaused", "type": "error" },
+  { "inputs": [], "name": "AlreadyRevealed", "type": "error" },
   {
     "inputs": [],
     "name": "ApprovalCallerNotOwnerNorApproved",
@@ -15,6 +16,7 @@
   { "inputs": [], "name": "ApprovalQueryForNonexistentToken", "type": "error" },
   { "inputs": [], "name": "BalanceQueryForZeroAddress", "type": "error" },
   { "inputs": [], "name": "CannotPauseInCurrentPhase", "type": "error" },
+  { "inputs": [], "name": "CommitHashNotSet", "type": "error" },
   {
     "inputs": [
       { "internalType": "address", "name": "implementation", "type": "address" }
@@ -62,6 +64,7 @@
   { "inputs": [], "name": "InvalidAddress", "type": "error" },
   { "inputs": [], "name": "InvalidAssignment", "type": "error" },
   { "inputs": [], "name": "InvalidBytes", "type": "error" },
+  { "inputs": [], "name": "InvalidCommitHash", "type": "error" },
   { "inputs": [], "name": "InvalidInitialization", "type": "error" },
   { "inputs": [], "name": "InvalidPhase", "type": "error" },
   { "inputs": [], "name": "InvalidProof", "type": "error" },
@@ -75,6 +78,7 @@
   { "inputs": [], "name": "NotEligibleForTier", "type": "error" },
   { "inputs": [], "name": "NotInitializing", "type": "error" },
   { "inputs": [], "name": "NotPaused", "type": "error" },
+  { "inputs": [], "name": "NotYetRevealed", "type": "error" },
   { "inputs": [], "name": "OnlyOwnerCanBurn", "type": "error" },
   {
     "inputs": [
@@ -172,6 +176,50 @@
       }
     ],
     "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "revealedURI",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "randomizer",
+        "type": "string"
+      }
+    ],
+    "name": "CollectionRevealed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "commitHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "CommitHashSet",
     "type": "event"
   },
   {
@@ -374,6 +422,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newURI",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "oldURI",
+        "type": "string"
+      }
+    ],
+    "name": "PlaceholderURIUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "minter",
@@ -412,6 +479,25 @@
       }
     ],
     "name": "PublicMint",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newURI",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "oldURI",
+        "type": "string"
+      }
+    ],
+    "name": "RevealedBaseURIUpdated",
     "type": "event"
   },
   {
@@ -561,13 +647,6 @@
   },
   {
     "inputs": [],
-    "name": "BASE_URI_HASH",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "FCFS_SUPPLY",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -687,6 +766,13 @@
   },
   {
     "inputs": [],
+    "name": "commitHash",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "currentPhase",
     "outputs": [
       { "internalType": "enum IPayback.SalePhase", "name": "", "type": "uint8" }
@@ -765,6 +851,20 @@
   },
   {
     "inputs": [],
+    "name": "getRevealStatus",
+    "outputs": [
+      { "internalType": "bool", "name": "revealed", "type": "bool" },
+      { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+      { "internalType": "bytes32", "name": "commitedHash", "type": "bytes32" },
+      { "internalType": "string", "name": "placeholder", "type": "string" },
+      { "internalType": "string", "name": "revealedURI", "type": "string" },
+      { "internalType": "string", "name": "randomizerStr", "type": "string" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getSaleStatus",
     "outputs": [
       {
@@ -822,7 +922,9 @@
         "internalType": "address",
         "name": "platformWallet_",
         "type": "address"
-      }
+      },
+      { "internalType": "string", "name": "placeholderURI_", "type": "string" },
+      { "internalType": "bytes32", "name": "commitHash_", "type": "bytes32" }
     ],
     "name": "initialize",
     "outputs": [],
@@ -842,6 +944,13 @@
   {
     "inputs": [],
     "name": "isPaused",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isRevealed",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
@@ -929,6 +1038,13 @@
   },
   {
     "inputs": [],
+    "name": "placeholderURI",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "platformWallet",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
@@ -987,6 +1103,13 @@
   },
   {
     "inputs": [],
+    "name": "randomizer",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -1004,6 +1127,30 @@
     "name": "resumeSale",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "revealedURI", "type": "string" },
+      { "internalType": "string", "name": "randomizer_", "type": "string" }
+    ],
+    "name": "revealCollection",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "revealTimestamp",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "revealedBaseURI",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1048,6 +1195,15 @@
       { "internalType": "bool", "name": "approved", "type": "bool" }
     ],
     "name": "setApprovalForAll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "newCommitHash", "type": "bytes32" }
+    ],
+    "name": "setCommitHash",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1164,6 +1320,19 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "newPlaceholderURI",
+        "type": "string"
+      }
+    ],
+    "name": "updatePlaceholderURI",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "newPlatformWallet",
         "type": "address"
@@ -1213,6 +1382,16 @@
     "name": "upgradeToAndCall",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "testURI", "type": "string" },
+      { "internalType": "string", "name": "testRandomizer", "type": "string" }
+    ],
+    "name": "verifyCommit",
+    "outputs": [{ "internalType": "bool", "name": "matches", "type": "bool" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
