@@ -28,13 +28,13 @@ interface PhaseData {
 
 export const useGlobalPhaseState = () => {
   const MAX_SUPPLY_FUNCTIONS: Record<
-    Phase,
-    { fnName: string; hasArgs: boolean }
-  > = {
-    gtd: { fnName: CONTRACT_FUNCTIONS.GTD_MAX_SUPPLY, hasArgs: false },
-    fcfs: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
-    public: { fnName: CONTRACT_FUNCTIONS.PUBLIC_MAX_SUPPLY, hasArgs: false },
-  };
+  Phase,
+  { fnName: string; hasArgs: boolean }
+> = {
+  gtd: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
+  fcfs: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
+  public: { fnName: CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY, hasArgs: true },
+};
 
   const contractsToRead = PHASE_ORDER.flatMap((phase) => {
     const keys = Object.keys(CONTRACT_FUNCTIONS) as Array<
@@ -70,6 +70,7 @@ export const useGlobalPhaseState = () => {
     contracts: contractsToRead,
   });
 
+  
   const contractData = useMemo(() => {
     if (!data)
       return {} as Record<Phase, { minted: number; maxSupply: number }>;
@@ -79,11 +80,7 @@ export const useGlobalPhaseState = () => {
     PHASE_ORDER.forEach((phase, index) => {
       const mintedResult = data[index * 2]?.result;
       const maxSupplyResult = data[index * 2 + 1]?.result;
-
-      const { fnName } = MAX_SUPPLY_FUNCTIONS[phase];
-
       if (
-        fnName === CONTRACT_FUNCTIONS.FCFS_REMAINING_SUPPLY &&
         Array.isArray(maxSupplyResult) &&
         maxSupplyResult.length === 2
       ) {
@@ -102,7 +99,6 @@ export const useGlobalPhaseState = () => {
 
     return result;
   }, [data]);
-
   const { phaseTimes, refetchAll: refetchPhaseTimes } = usePhaseTimes();
 
   const phases = useMemo(() => {
