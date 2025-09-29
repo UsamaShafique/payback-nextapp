@@ -1,25 +1,22 @@
-"use client";
 import { useEffect, useState } from "react";
 
-export function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(false);
+export function useIsMobile(breakpoint: number = 768) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < breakpoint : false
+  );
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const userAgent = navigator.userAgent || navigator.vendor || "";
-    const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
-
-    const checkMobile = () => {
-      const isSmallScreen = window.innerWidth <= breakpoint;
-      setIsMobile(isMobileDevice || isSmallScreen);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < breakpoint);
     };
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    window.addEventListener("resize", handleResize);
+
+    // Run once on mount
+    handleResize();
 
     return () => {
-      window.removeEventListener("resize", checkMobile);
+      window.removeEventListener("resize", handleResize);
     };
   }, [breakpoint]);
 
