@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useConnect} from "wagmi";
+import { useConnect } from "wagmi";
 import { getConnections, switchChain } from "@wagmi/core";
 import { activeChain, config } from "@/wagmi";
 import { WalletLogo } from "./icons/WalletLogo";
@@ -27,7 +27,6 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
     try {
       await connectAsync({ connector });
       const connections = getConnections(config);
-
       if (
         connections[0]?.connector &&
         connections[0]?.chainId !== activeChain.id

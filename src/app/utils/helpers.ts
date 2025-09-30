@@ -1,9 +1,9 @@
 "use client";
 
 import { simulateContract, estimateFeesPerGas } from "@wagmi/core";
-import { formatEther } from "viem";
+import { Chain, formatEther } from "viem";
 import { config } from "../../wagmi";
-import { EXPLORER_BASE, MintNFTContract } from "../constants";
+import { EXPLORER_BY_CHAIN, MintNFTContract } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
 import { PhaseStatus } from "../constants";
 import { PhaseTimeData } from "../hooks/usePhaseTimes";
@@ -72,9 +72,10 @@ export const parseMintError = (err: any): string => {
     : rawMessage;
 };
 
-export const getTokenExplorerUrl = (tokenId: string) =>
-  `${EXPLORER_BASE}/token/${MintNFTContract}?a=${tokenId}`;
-
+export const getTokenExplorerUrl = (tokenId: string, chainId: number) => {
+  const chainExplorer = EXPLORER_BY_CHAIN[chainId];
+  return `${chainExplorer}/token/${MintNFTContract}?a=${tokenId}`;
+};
 export const resolveStatus = (
   soldOut: boolean,
   activePhaseFound: boolean,

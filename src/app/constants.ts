@@ -52,14 +52,14 @@ export const CONTRACT_FUNCTIONS = {
   PUBLIC_REMAINING_SUPPLY: "getRemainingAmount",
 } as const;
 
-const EXPLORER_BY_CHAIN: Record<number, string> = {
+interface chainExplorerType {
+  [key: number]: string;
+}
+
+export const EXPLORER_BY_CHAIN: chainExplorerType = {
   11155111: "https://sepolia.etherscan.io",
   1: "https://etherscan.io",
 };
-
-export const EXPLORER_BASE = EXPLORER_BY_CHAIN[activeChain.id];
-
-export const TBD_TEXT = "TBD";
 
 export const MAX_QUANTITY_PER_PHASE = {
   gtd: 1,
