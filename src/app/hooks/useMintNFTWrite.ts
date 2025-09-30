@@ -5,7 +5,7 @@ import {
   writeContract,
   waitForTransactionReceipt,
 } from "@wagmi/core";
-import { config } from "../../wagmi";
+import { activeChain, config } from "../../wagmi";
 import { MintNFTContract, CONTRACT_FUNCTIONS } from "../constants";
 import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
 
@@ -33,6 +33,7 @@ export const useMintNFTWrite = () => {
       address: request.address,
       functionName: request.functionName,
       args: request.args,
+      chainId:activeChain.id
       // gas: gasOverrides?.gas,
       // maxFeePerGas: gasOverrides?.maxFeePerGas,
       // maxPriorityFeePerGas: gasOverrides?.maxPriorityFeePerGas,
@@ -54,6 +55,7 @@ export const useMintNFTWrite = () => {
       address: request.address,
       functionName: request.functionName,
       args: request.args,
+      chainId:activeChain.id
       // gas: gasOverrides?.gas,
       // maxFeePerGas: gasOverrides?.maxFeePerGas,
       // maxPriorityFeePerGas: gasOverrides?.maxPriorityFeePerGas,

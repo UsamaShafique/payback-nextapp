@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { Modal } from "react-bootstrap";
 import { getTokenExplorerUrl } from "../utils/helpers";
+import { activeChain } from "@/wagmi";
 
 type DynamicModalProps = {
   show: boolean;
@@ -18,7 +19,9 @@ const DynamicModal: FC<DynamicModalProps> = ({
   mintedId,
 }) => {
   const isSuccess = type === "success";
-  const mintedIds = mintedId ? mintedId?.split(",")?.map((id) => id.trim()) : [];
+  const mintedIds = mintedId
+    ? mintedId?.split(",")?.map((id) => id.trim())
+    : [];
 
   return (
     <Modal show={show} onHide={onHide} centered className="bannermodal">
@@ -88,7 +91,7 @@ const DynamicModal: FC<DynamicModalProps> = ({
               <div className="modalbtns">
                 {mintedIds?.length > 0 && (
                   <a
-                    href={getTokenExplorerUrl(mintedIds[0])}
+                    href={getTokenExplorerUrl(mintedIds[0], activeChain.id)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="innerbtn"
