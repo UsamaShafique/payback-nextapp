@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { useConnect, useSignMessage, useDisconnect } from "wagmi";
+import { useConnect} from "wagmi";
+import { getConnections, switchChain } from "@wagmi/core";
+import { activeChain, config } from "@/wagmi";
 import { WalletLogo } from "./icons/WalletLogo";
 import "../styles/walletModal.scss";
 import { Modal } from "react-bootstrap";
@@ -24,6 +26,18 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
 
     try {
       await connectAsync({ connector });
+      const connections = getConnections(config);
+
+      if (
+        connections[0]?.connector &&
+        connections[0]?.chainId !== activeChain.id
+      ) {
+        await switchChain(config, {
+          connector: connections[0].connector,
+          chainId: activeChain.id,
+        });
+      }
+
       onClose();
     } catch (err) {
       setConnectionError(
@@ -34,7 +48,6 @@ export const WalletModal: React.FC<WalletModalProps> = ({ open, onClose }) => {
     }
   };
   const isMobile = useIsMobile();
-
 
   if (!open) return null;
 

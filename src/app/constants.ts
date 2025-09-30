@@ -1,3 +1,4 @@
+import { activeChain } from "../wagmi";
 export const MintNFTContract: `0x${string}` =
   "0xf5F5Fe0a3EaF6778E662888ccB931FadECAE0F19";
 
@@ -49,11 +50,15 @@ export const CONTRACT_FUNCTIONS = {
   GTD_REMAINING_SUPPLY: "getRemainingAmount",
   FCFS_REMAINING_SUPPLY: "getRemainingAmount",
   PUBLIC_REMAINING_SUPPLY: "getRemainingAmount",
-
-
 } as const;
 
-export const EXPLORER_BASE = "https://sepolia.etherscan.io";
+const EXPLORER_BY_CHAIN: Record<number, string> = {
+  11155111: "https://sepolia.etherscan.io",
+  1: "https://etherscan.io",
+};
+
+export const EXPLORER_BASE = EXPLORER_BY_CHAIN[activeChain.id];
+
 export const TBD_TEXT = "TBD";
 
 export const MAX_QUANTITY_PER_PHASE = {
@@ -72,7 +77,7 @@ export const PHASE_STATUSES = {
   ACTIVE: "active",
   EXPIRED: "expired",
 } as const;
-export type PhaseStatus = typeof PHASE_STATUSES[keyof typeof PHASE_STATUSES];
+export type PhaseStatus = (typeof PHASE_STATUSES)[keyof typeof PHASE_STATUSES];
 
 export const PHASE_BASE_ID: Record<Phase, number> = {
   gtd: 1,

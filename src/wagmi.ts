@@ -1,20 +1,22 @@
 import { http, cookieStorage, createConfig, createStorage } from "wagmi";
-import { sepolia } from "wagmi/chains";
+import { sepolia, mainnet } from "wagmi/chains";
 import { metaMask, walletConnect } from "wagmi/connectors";
 
+const isDev = process.env.NEXT_PUBLIC_ENV === "development";
+export const activeChain = isDev ? sepolia : mainnet;
+
 export const config = createConfig({
-  chains: [sepolia],
+  chains: [activeChain],
   connectors: [
     metaMask(),
     walletConnect({
-      projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID!, 
+      projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID!,
     }),
   ],
-  storage: createStorage({
-    storage: cookieStorage,
-  }),
+  storage: createStorage({ storage: cookieStorage }),
   ssr: true,
   transports: {
+    [mainnet.id]: http(),
     [sepolia.id]: http(),
   },
 });
