@@ -70,7 +70,7 @@ export const usePhaseTimes = () => {
           acc[phase] = {
             endTime: 0,
             remainingSeconds: 0,
-            status: PHASE_STATUSES[0],
+            status: PHASE_STATUSES.UPCOMING,
           };
           return acc;
         },
@@ -84,17 +84,17 @@ export const usePhaseTimes = () => {
     return PHASE_ORDER.reduce(
       (acc, phase) => {
         const endTimeRaw = endTimes[phase];
-        let status: PhaseStatus = PHASE_STATUSES[0];
+        let status: PhaseStatus = PHASE_STATUSES.UPCOMING;
         let remainingSeconds = 0;
 
         if (!endTimeRaw) {
-          status = PHASE_STATUSES[0];
+          status = PHASE_STATUSES.UPCOMING;
         } else if (!activePhaseFound && now < endTimeRaw) {
-          status = PHASE_STATUSES[1];
+          status = PHASE_STATUSES.ACTIVE;
           remainingSeconds = endTimeRaw - now;
           activePhaseFound = true;
         } else if (now >= endTimeRaw) {
-          status = PHASE_STATUSES[2];
+          status = PHASE_STATUSES.EXPIRED;
         }
 
         acc[phase] = { endTime: endTimeRaw, remainingSeconds, status };

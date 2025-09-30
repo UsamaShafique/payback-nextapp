@@ -1,5 +1,5 @@
 export const MintNFTContract: `0x${string}` =
-  "0x16f82bC250B09642b7041DA1426fEA1479237D64";
+  "0xf5F5Fe0a3EaF6778E662888ccB931FadECAE0F19";
 
 export const TOTAL_COLLECTION_SIZE = 999;
 
@@ -67,8 +67,12 @@ export type PhaseKey = keyof typeof MAX_QUANTITY_PER_PHASE;
 export type Phase = (typeof PHASES)[keyof typeof PHASES];
 
 export const PHASE_ORDER = ["gtd", "fcfs", "public"] as const;
-export const PHASE_STATUSES = ["upcoming", "active", "expired"] as const;
-export type PhaseStatus = (typeof PHASE_STATUSES)[number];
+export const PHASE_STATUSES = {
+  UPCOMING: "upcoming",
+  ACTIVE: "active",
+  EXPIRED: "expired",
+} as const;
+export type PhaseStatus = typeof PHASE_STATUSES[keyof typeof PHASE_STATUSES];
 
 export const PHASE_BASE_ID: Record<Phase, number> = {
   gtd: 1,

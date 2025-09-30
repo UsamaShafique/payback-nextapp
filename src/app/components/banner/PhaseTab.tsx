@@ -58,10 +58,6 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
 
     const validations = [
       {
-        condition: !eligible,
-        message: "You are not eligible to mint in this phase.",
-      },
-      {
         condition: !phaseState || phaseState.status !== "active",
         message: ` ${
           activePhaseKey
@@ -70,9 +66,18 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
         }`,
       },
       {
+        condition: !eligible,
+        message: "You are not eligible to mint in this phase.",
+      },
+      {
         condition: !balanceData || balanceData.value === 0n,
         message: "Insufficient balance!",
       },
+      {
+        condition: phaseState?.minted >= phaseState?.maxSupply,
+        message: "All NFTs have already been minted in this phase.",
+      },
+
       {
         condition:
           (mintedCount ?? 0) + quantity > MAX_QUANTITY_PER_PHASE[activeKey],
