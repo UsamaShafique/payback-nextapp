@@ -19,7 +19,7 @@ const PhaseTimer: React.FC<PhaseTimerProps> = ({ activeKey }) => {
     <div className="innergtd">
       <p className="gtdpara">Time remaining</p>
       <h6 className="gtdhead">
-        {phaseState.status === PHASE_STATUSES[1]
+        {phaseState.status === PHASE_STATUSES.ACTIVE
           ? formatTime(phaseState.remainingSeconds)
           : "--:--"}
       </h6>

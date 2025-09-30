@@ -106,7 +106,7 @@ export const useGlobalPhaseState = () => {
       const timeData: PhaseTimeData = phaseTimes[phase] || {
         endTime: 0,
         remainingSeconds: 0,
-        status: PHASE_STATUSES[0],
+        status: PHASE_STATUSES.UPCOMING,
       };
 
       const supplyData = contractData[phase];
@@ -115,9 +115,9 @@ export const useGlobalPhaseState = () => {
         supplyData?.maxSupply > 0;
 
       let status = resolveStatus(false, activePhaseFound, timeData);
-      if (status === PHASE_STATUSES[1]) activePhaseFound = true;
+      if (status === PHASE_STATUSES.ACTIVE) activePhaseFound = true;
       if (soldOut && phase === PHASES.PUBLIC) {
-        status = PHASE_STATUSES[2];
+        status = PHASE_STATUSES.EXPIRED;
       }
       const remainingSeconds =
         soldOut && phase === PHASES.PUBLIC ? 0 : timeData.remainingSeconds;
@@ -133,7 +133,7 @@ export const useGlobalPhaseState = () => {
 
   useEffect(() => {
     const currentActivePhase = PHASE_ORDER.find(
-      (phase) => phases[phase].status === PHASE_STATUSES[1]
+      (phase) => phases[phase].status === PHASE_STATUSES.ACTIVE
     );
     if (!currentActivePhase) return;
 
