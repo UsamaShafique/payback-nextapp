@@ -18,6 +18,7 @@ export const useMintHandler = () => {
   const [mintSuccess, setMintSuccess] = useState(false);
   const [mintFailure, setMintFailure] = useState(false);
   const [mintError, setMintError] = useState<string | null>(null);
+  const [mintedIds, setMintedIds] = useState<string[]>([]);
 
   const proofsGTD = Object.fromEntries(
     Object.entries(proofsGTDJson).map(([k, v]) => [k.toLowerCase(), v])
@@ -95,6 +96,18 @@ export const useMintHandler = () => {
       }
 
       if (receipt.status === "success") {
+        const ids = receipt.logs
+          ?.filter(
+            (log: any) =>
+              log.topics[0] ===
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+          )
+          ?.map((log: any) =>
+            log.topics[3] ? BigInt(log.topics[3]).toString() : ""
+          )
+          ?.filter((id: string) => id !== "");
+
+        setMintedIds(ids);
         setMintSuccess(true);
         setMintError(null);
       } else {
@@ -123,5 +136,6 @@ export const useMintHandler = () => {
     isEligible,
     mintError,
     setMintError,
+    mintedIds,
   };
 };
