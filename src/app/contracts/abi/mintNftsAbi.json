@@ -805,6 +805,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "fcfsSupplyAdjusted",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
@@ -1040,7 +1047,7 @@
       }
     ],
     "name": "presaleMint",
-    "outputs": [],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1056,7 +1063,9 @@
       { "internalType": "uint256", "name": "quantity", "type": "uint256" }
     ],
     "name": "publicMint",
-    "outputs": [],
+    "outputs": [
+      { "internalType": "uint256[]", "name": "tokenIds", "type": "uint256[]" }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },

@@ -13,16 +13,15 @@ const PhaseTimer: React.FC<PhaseTimerProps> = ({ activeKey }) => {
   const { phases } = useGlobalPhaseState();
   const phaseState = phases[activeKey];
 
-  if (!phaseState) return null;
+  const timeText =
+    phaseState && phaseState.status === PHASE_STATUSES.ACTIVE
+      ? formatTime(phaseState.remainingSeconds)
+      : "--:--";
 
   return (
     <div className="innergtd">
       <p className="gtdpara">Time remaining</p>
-      <h6 className="gtdhead">
-        {phaseState.status === PHASE_STATUSES.ACTIVE
-          ? formatTime(phaseState.remainingSeconds)
-          : "--:--"}
-      </h6>
+      <h6 className="gtdhead">{timeText}</h6>
     </div>
   );
 };

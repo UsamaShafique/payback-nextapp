@@ -4,7 +4,12 @@ import React from "react";
 import CounterInput from "../banner/CounterInput";
 import { WalletButton } from "../../components/WalletButton";
 import { useAccount, useBalance } from "wagmi";
-import { MAX_QUANTITY_PER_PHASE, Phase, PhaseKey } from "@/app/constants";
+import {
+  MAX_QUANTITY_PER_PHASE,
+  Phase,
+  PHASE_STATUSES,
+  PhaseKey,
+} from "@/app/constants";
 
 import { useNftSupply, useWalletMintCount } from "@/app/hooks/useReadContract";
 import toast from "react-hot-toast";
@@ -40,6 +45,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
     setMintSuccess,
     setMintFailure,
     setMintError,
+    mintedIds,
   } = useMintHandler();
 
   const [isMinting, setIsMinting] = React.useState(false);
@@ -76,6 +82,12 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
       {
         condition: phaseState?.minted >= phaseState?.maxSupply,
         message: "All NFTs have already been minted in this phase.",
+      },
+      {
+        condition:
+          phaseState &&
+          quantity > phaseState.maxSupply - (phaseState.minted ?? 0),
+        message: `Only ${phaseState?.maxSupply - (phaseState?.minted ?? 0)} NFT(s) remaining in this phase.`,
       },
 
       {
@@ -117,7 +129,9 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
       <div className="maingtd">
         <div className="innergtd">
           <p className="gtdpara">Status</p>
-          <h6 className="gtdhead">{phaseState?.status}</h6>
+          <h6 className="gtdhead">
+            {phaseState?.status ? phaseState.status : PHASE_STATUSES.UPCOMING}
+          </h6>
         </div>
 
         <PhaseTimer activeKey={activeKey} />
@@ -164,14 +178,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
         show={mintSuccess}
         onHide={() => setMintSuccess(false)}
         type="success"
-        mintedId={
-          value && value > 1
-            ? Array.from(
-                { length: value },
-                (_, i) => totalSupply - value + i + 1
-              ).join(", ")
-            : `${totalSupply}`
-        }
+        mintedId={mintedIds.join(", ")}
       />
       <DynamicModal
         show={mintFailure}

@@ -18,9 +18,10 @@ const Banner: React.FC = () => {
       setActiveKey(
         PHASE_MAP[currentPhase as keyof typeof PHASE_MAP] ?? undefined
       );
+    } else {
+      setActiveKey(PHASES.GTD);
     }
   }, [currentPhase]);
-
   if (currentPhaseLoading) return <p>Loading mint phase...</p>;
   return (
     <section className="mainbanner">
