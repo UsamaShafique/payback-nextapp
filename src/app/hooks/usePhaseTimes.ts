@@ -16,58 +16,53 @@ import mintNftsAbi from "../contracts/abi/mintNftsAbi.json";
 const abi = mintNftsAbi as Abi;
 
 export type PhaseTimeData = {
+  startTime: number;
   endTime: number;
   remainingSeconds: number;
   status: PhaseStatus;
 };
 
-export interface PhaseSupplyData {
-  minted: number;
-  maxSupply: number;
-}
-
 export const usePhaseTimes = () => {
   const [tick, setTick] = useState(0);
 
-  const phaseFunctionMap: Record<Phase, string> = {
-    gtd: CONTRACT_FUNCTIONS.GTD_END_TIME,
-    fcfs: CONTRACT_FUNCTIONS.FCFS_END_TIME,
-    public: CONTRACT_FUNCTIONS.PUBLIC_END_TIME,
+  const phaseTimeFunctions: Record<Phase, { start: string; end: string }> = {
+    gtd: {
+      start: CONTRACT_FUNCTIONS.GTD_START_TIME,
+      end: CONTRACT_FUNCTIONS.GTD_END_TIME,
+    },
+    fcfs: {
+      start: CONTRACT_FUNCTIONS.FCFS_START_TIME,
+      end: CONTRACT_FUNCTIONS.FCFS_END_TIME,
+    },
+    public: {
+      start: CONTRACT_FUNCTIONS.PUBLIC_START_TIME,
+      end: CONTRACT_FUNCTIONS.PUBLIC_END_TIME,
+    },
   };
 
   const { data, refetch } = useReadContracts({
-    contracts: PHASE_ORDER.map((phase) => ({
-      address: MintNFTContract,
-      abi: abi,
-      functionName: phaseFunctionMap[phase],
-    })),
+    contracts: PHASE_ORDER?.flatMap((phase) => [
+      {
+        address: MintNFTContract,
+        abi,
+        functionName: phaseTimeFunctions[phase].start,
+      },
+      {
+        address: MintNFTContract,
+        abi,
+        functionName: phaseTimeFunctions[phase].end,
+      },
+    ]),
   });
-
-  const endTimes = useMemo(
-    () =>
-      PHASE_ORDER.reduce(
-        (acc, phase, idx) => {
-          const raw = data?.[idx]?.result;
-          acc[phase] = typeof raw === "bigint" ? Number(raw) : 0;
-          return acc;
-        },
-        {} as Record<Phase, number>
-      ),
-    [data]
-  );
-
-  useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const isLoaded = data?.every((item) => item?.result !== undefined);
 
-  const phaseTimes: Record<Phase, PhaseTimeData> = useMemo(() => {
+  const phaseTimes = useMemo(() => {
     if (!isLoaded) {
-      return PHASE_ORDER.reduce(
+      return PHASE_ORDER?.reduce(
         (acc, phase) => {
           acc[phase] = {
+            startTime: 0,
             endTime: 0,
             remainingSeconds: 0,
             status: PHASE_STATUSES.UPCOMING,
@@ -79,33 +74,42 @@ export const usePhaseTimes = () => {
     }
 
     const now = Math.floor(Date.now() / 1000);
-    let activePhaseFound = false;
+    const result: Record<Phase, PhaseTimeData> = {} as any;
 
-    return PHASE_ORDER.reduce(
-      (acc, phase) => {
-        const endTimeRaw = endTimes[phase];
-        let status: PhaseStatus = PHASE_STATUSES.UPCOMING;
-        let remainingSeconds = 0;
+    PHASE_ORDER?.forEach((phase, i) => {
+      const startIdx = i * 2;
+      const endIdx = i * 2 + 1;
 
-        if (!endTimeRaw) {
-          status = PHASE_STATUSES.UPCOMING;
-        } else if (!activePhaseFound && now < endTimeRaw) {
-          status = PHASE_STATUSES.ACTIVE;
-          remainingSeconds = endTimeRaw - now;
-          activePhaseFound = true;
-        } else if (now >= endTimeRaw) {
-          status = PHASE_STATUSES.EXPIRED;
-        }
+      const rawStart = data?.[startIdx]?.result;
+      const rawEnd = data?.[endIdx]?.result;
 
-        acc[phase] = { endTime: endTimeRaw, remainingSeconds, status };
-        return acc;
-      },
-      {} as Record<Phase, PhaseTimeData>
-    );
-  }, [endTimes, tick, isLoaded]);
+      const startTime = typeof rawStart === "bigint" ? Number(rawStart) : 0;
+      const endTime = typeof rawEnd === "bigint" ? Number(rawEnd) : 0;
 
-  return {
-    phaseTimes,
-    refetchAll: () => refetch?.(),
-  };
+      let status: PhaseStatus = PHASE_STATUSES.UPCOMING;
+      let remainingSeconds = 0;
+
+      if (startTime === 0 || endTime === 0 || endTime <= startTime) {
+        status = PHASE_STATUSES.UPCOMING;
+      } else if (now < startTime) {
+        status = PHASE_STATUSES.UPCOMING;
+      } else if (now >= startTime && now < endTime) {
+        status = PHASE_STATUSES.ACTIVE;
+        remainingSeconds = endTime - now;
+      } else {
+        status = PHASE_STATUSES.EXPIRED;
+      }
+
+      result[phase] = { startTime, endTime, remainingSeconds, status };
+    });
+
+    return result;
+  }, [data, tick, isLoaded]);
+
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return { phaseTimes, refetchAll: () => refetch?.() };
 };

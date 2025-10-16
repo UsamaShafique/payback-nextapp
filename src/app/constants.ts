@@ -1,6 +1,6 @@
 import { activeChain } from "../wagmi";
 export const MintNFTContract: `0x${string}` =
-  "0xB12e5C5Dd3799DCB4BD1dA827FB78cB092728191";
+  "0x0b6a1FF9C2bf7e05353f58f79ac63756a2Ce8364";
 
 export const TOTAL_COLLECTION_SIZE = 999;
 
@@ -44,9 +44,12 @@ export const CONTRACT_FUNCTIONS = {
   GTD_MAX_SUPPLY: "WL_GTD_SUPPLY",
   FCFS_MAX_SUPPLY: "FCFS_SUPPLY",
   PUBLIC_MAX_SUPPLY: "MAX_SUPPLY",
-  GTD_END_TIME: "gtdPhaseTime",
-  FCFS_END_TIME: "fcfsPhaseTime",
-  PUBLIC_END_TIME: "publicPhaseTime",
+  GTD_START_TIME: "gtdStartTime",
+  GTD_END_TIME: "gtdEndTime",
+  FCFS_START_TIME: "fcfsStartTime",
+  FCFS_END_TIME: "fcfsEndTime",
+  PUBLIC_START_TIME: "publicStartTime",
+  PUBLIC_END_TIME: "publicEndTime",
   GTD_REMAINING_SUPPLY: "getRemainingAmount",
   FCFS_REMAINING_SUPPLY: "getRemainingAmount",
   PUBLIC_REMAINING_SUPPLY: "getRemainingAmount",

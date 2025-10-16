@@ -25,6 +25,8 @@ interface PhaseData {
   maxSupply: number;
   remainingSeconds: number;
   status: PhaseStatus;
+  startTime: number;
+  endTime: number;
 }
 
 export const useGlobalPhaseState = () => {
@@ -38,17 +40,17 @@ export const useGlobalPhaseState = () => {
   };
 
   const contractsToRead = PHASE_ORDER.flatMap((phase) => {
-    const keys = Object.keys(CONTRACT_FUNCTIONS) as Array<
+    const keys = Object?.keys(CONTRACT_FUNCTIONS) as Array<
       keyof typeof CONTRACT_FUNCTIONS
     >;
-    const mintedFnKey = keys.find((key) =>
-      key.toLowerCase().includes(`${phase}_minted`)
+    const mintedFnKey = keys?.find((key) =>
+      key?.toLowerCase()?.includes(`${phase}_minted`)
     );
 
     const contracts = [];
 
     if (mintedFnKey) {
-      contracts.push({
+      contracts?.push({
         address: MintNFTContract,
         abi,
         functionName: CONTRACT_FUNCTIONS[mintedFnKey],
@@ -77,7 +79,7 @@ export const useGlobalPhaseState = () => {
     const result: Record<Phase, { minted: number; maxSupply: number }> =
       {} as Record<Phase, { minted: number; maxSupply: number }>;
 
-    PHASE_ORDER.forEach((phase, index) => {
+    PHASE_ORDER?.forEach((phase, index) => {
       const mintedResult = data[index * 2]?.result;
       const maxSupplyResult = data[index * 2 + 1]?.result;
       if (Array.isArray(maxSupplyResult) && maxSupplyResult.length === 2) {
@@ -120,10 +122,12 @@ export const useGlobalPhaseState = () => {
         status = PHASE_STATUSES.EXPIRED;
       }
       const remainingSeconds =
-        soldOut && phase === PHASES.PUBLIC ? 0 : timeData.remainingSeconds;
+        soldOut && phase === PHASES.PUBLIC ? 0 : timeData?.remainingSeconds;
       result[phase] = {
         ...supplyData,
         remainingSeconds,
+        startTime: timeData?.startTime,
+        endTime: timeData?.endTime,
         status,
       };
     });
@@ -137,7 +141,7 @@ export const useGlobalPhaseState = () => {
     );
     if (!currentActivePhase) return;
 
-    const remainingTime = phases[currentActivePhase].remainingSeconds * 1000;
+    const remainingTime = phases[currentActivePhase]?.remainingSeconds * 1000;
     if (remainingTime <= 0) {
       refetch();
       refetchPhaseTimes();

@@ -148,7 +148,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
 
       {address ? (
         <>
-          {isActive && (
+          {!isExpired && (
             <p className="publicpara">
               {eligible
                 ? "You are eligible to Mint NFT"
@@ -157,11 +157,6 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
           )}
 
           {isExpired && <p className="publicpara">This phase has expired.</p>}
-
-          {!isActive && !isExpired && (
-            <p className="publicpara">This phase has not started yet.</p>
-          )}
-
           <button
             className="mintbtn"
             onClick={handleMint}
