@@ -1,26 +1,42 @@
 {
-  "0x429Ab5Da5bfc4DaFc51712165324442516976003": {
-      "proof": [
-          "0xbf1942ed78289092f12145ed70359ddbe3c9e1221dd26131758fbbebade5dd05",
-          "0x634fad2ab4dddb9a6a3a1d9dde76716dbc2ae3eb07ca789da1bc460e2f7f9fae"
-      ]
-  },
-  "0x341Dc88d068C6E6CEAF2b492387Ea42766D65345": {
-      "proof": [
-          "0x7ec55990c211718752ff0d56d77693fd6796c8fb895e0d48355be552ce016e4a",
-          "0x634fad2ab4dddb9a6a3a1d9dde76716dbc2ae3eb07ca789da1bc460e2f7f9fae"
-      ]
-  },
-  "0x38c5d22423F029E355926944Ee4AA435b851fFA2": {
-      "proof": [
-          "0xe0d2e0eed8e64a3590391952b0086fb173161dc148d781de5bd123a7348ed600",
-          "0x5fbcf87780a1b011468489d8ff648e8d5306b32ee68ebe43e48f82e4d4fb0741"
-      ]
-  },
-  "0x61f8f7F80e42208e9e47bF544DA1864e67b10068": {
-      "proof": [
-          "0xe33279d34f4190aa0bba803e4a26f7ae97f6973c0875b51a0187495e1e54d428",
-          "0x5fbcf87780a1b011468489d8ff648e8d5306b32ee68ebe43e48f82e4d4fb0741"
-      ]
-  }
+    "0x429Ab5Da5bfc4DaFc51712165324442516976003": {
+        "proof": [
+            "0xbf1942ed78289092f12145ed70359ddbe3c9e1221dd26131758fbbebade5dd05",
+            "0x634fad2ab4dddb9a6a3a1d9dde76716dbc2ae3eb07ca789da1bc460e2f7f9fae",
+            "0x915fbfa99d26abe01781d2cbc63c5ce1e7f38ac320efbf2624c016dcc25c99ba"
+        ]
+    },
+    "0x341Dc88d068C6E6CEAF2b492387Ea42766D65345": {
+        "proof": [
+            "0x7ec55990c211718752ff0d56d77693fd6796c8fb895e0d48355be552ce016e4a",
+            "0x634fad2ab4dddb9a6a3a1d9dde76716dbc2ae3eb07ca789da1bc460e2f7f9fae",
+            "0x915fbfa99d26abe01781d2cbc63c5ce1e7f38ac320efbf2624c016dcc25c99ba"
+        ]
+    },
+    "0x38c5d22423F029E355926944Ee4AA435b851fFA2": {
+        "proof": [
+            "0xe0d2e0eed8e64a3590391952b0086fb173161dc148d781de5bd123a7348ed600",
+            "0x5fbcf87780a1b011468489d8ff648e8d5306b32ee68ebe43e48f82e4d4fb0741",
+            "0x915fbfa99d26abe01781d2cbc63c5ce1e7f38ac320efbf2624c016dcc25c99ba"
+        ]
+    },
+    "0x61f8f7F80e42208e9e47bF544DA1864e67b10068": {
+        "proof": [
+            "0xe33279d34f4190aa0bba803e4a26f7ae97f6973c0875b51a0187495e1e54d428",
+            "0x5fbcf87780a1b011468489d8ff648e8d5306b32ee68ebe43e48f82e4d4fb0741",
+            "0x915fbfa99d26abe01781d2cbc63c5ce1e7f38ac320efbf2624c016dcc25c99ba"
+        ]
+    },
+    "0x4313aA15Cbbc55e0e1b3a657003A1B6d183f65fC": {
+        "proof": [
+            "0x555241feef363400220ad5596c171579e77a49543a14ec3189176b095b29b840",
+            "0xbb6b0a73d2b065188ab2fc72a91b1ff4f9ed6102f91985fd9e90f7e5c5fd8c9c"
+        ]
+    },
+    "0x9c4527C00b07D0Df8E2C4BCF6fFC1E6e2e84A1A0": {
+        "proof": [
+            "0xb04ab5fcfdda484530eecf2e5da6b67a4dc89af793483013ebe2e7f9f72d56e0",
+            "0xbb6b0a73d2b065188ab2fc72a91b1ff4f9ed6102f91985fd9e90f7e5c5fd8c9c"
+        ]
+    }
 }
