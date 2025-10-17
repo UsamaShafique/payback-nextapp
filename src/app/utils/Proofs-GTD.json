@@ -3,39 +3,32 @@
         "proof": [
             "0x9a563fe89a9ec453ac2cbe97ac17d918a8f6f05a4eea8b3b55acb80f0140aad2",
             "0x429b5d715335a099683fced1d21e9729f6d81ef2fc52f31fb065c3aab36b7a0d",
-            "0x92fff3a5fff5dd49b85bccd4457ed077d7def308d2566ad427a5b3f8f41a6a3a"
+            "0xcc88fd7fa6cfa6121b4a5826c07a8374a9abb89aa0bb681ffd2d8febcf300e71"
         ]
     },
     "0xa517B91942C7923815aEa1720E09a2576CD52a51": {
         "proof": [
             "0xd5fd55207d9d3b66a8c3504826c1ae73ded36d014a15a4992b864535f8711709",
             "0x429b5d715335a099683fced1d21e9729f6d81ef2fc52f31fb065c3aab36b7a0d",
-            "0x92fff3a5fff5dd49b85bccd4457ed077d7def308d2566ad427a5b3f8f41a6a3a"
+            "0xcc88fd7fa6cfa6121b4a5826c07a8374a9abb89aa0bb681ffd2d8febcf300e71"
         ]
     },
     "0x187287FE1daf5a1F32D6C329C7DdC86d69b4EbB8": {
         "proof": [
             "0x05703191b8128381874b8f2b028ec37fbf58cc14047e08cb344e14733ff2cec8",
             "0x1257d085fbcddf116d0f3f584936354bb51f591eac2f235c44f651b708b808f9",
-            "0x92fff3a5fff5dd49b85bccd4457ed077d7def308d2566ad427a5b3f8f41a6a3a"
+            "0xcc88fd7fa6cfa6121b4a5826c07a8374a9abb89aa0bb681ffd2d8febcf300e71"
         ]
     },
     "0x13F02594D5e36Ee36566c83A0d1242fD995a72eD": {
         "proof": [
             "0x38c4134b56699fd12bf87787a3908bb1708f5bc25ecd2087796fa23e786b025d",
             "0x1257d085fbcddf116d0f3f584936354bb51f591eac2f235c44f651b708b808f9",
-            "0x92fff3a5fff5dd49b85bccd4457ed077d7def308d2566ad427a5b3f8f41a6a3a"
+            "0xcc88fd7fa6cfa6121b4a5826c07a8374a9abb89aa0bb681ffd2d8febcf300e71"
         ]
     },
     "0x13e711d563Eb570066e2cB5b2CDCc25b2a3c6931": {
         "proof": [
-            "0x9f0703cb46bcab6cea55e7d6b7147c26e0a1aa72960e68ef55e0358dbd9f54c0",
-            "0xb8153efe63ed6644befbe5f3a3842689cd9f43bbac7bf9f7cca7588572cc7b46"
-        ]
-    },
-    "0xd8B17055cAb96113275bE9afC7db4803Af1F0D8e": {
-        "proof": [
-            "0xcc88fd7fa6cfa6121b4a5826c07a8374a9abb89aa0bb681ffd2d8febcf300e71",
             "0xb8153efe63ed6644befbe5f3a3842689cd9f43bbac7bf9f7cca7588572cc7b46"
         ]
     }

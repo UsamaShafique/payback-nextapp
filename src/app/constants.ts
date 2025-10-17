@@ -1,6 +1,6 @@
 import { activeChain } from "../wagmi";
 export const MintNFTContract: `0x${string}` =
-  "0x0b6a1FF9C2bf7e05353f58f79ac63756a2Ce8364";
+  "0xA335ab8f5c08a31faF2f23D9864041529F097D11";
 
 export const TOTAL_COLLECTION_SIZE = 999;
 
