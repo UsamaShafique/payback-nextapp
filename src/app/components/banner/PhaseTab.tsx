@@ -22,6 +22,23 @@ interface PhaseTabProps {
   title: string;
   activeKey: Phase;
 }
+function revealAndFadeError(
+  setError: React.Dispatch<React.SetStateAction<string | null>>,
+  setFade: React.Dispatch<React.SetStateAction<boolean>>,
+  message: string,
+  fadeDelay = 2000,
+  clearDelay = 3000
+) {
+  setError(message);
+  setFade(false);
+
+  setTimeout(() => setFade(true), fadeDelay);
+  setTimeout(() => {
+    setError(null);
+    setFade(false);
+  }, clearDelay);
+}
+
 
 const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
   const { address } = useAccount();
@@ -101,13 +118,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
 
     for (const validation of validations) {
       if (validation?.condition) {
-        setErrorMessage(validation?.message);
-        setIsFading(false);
-        setTimeout(() => setIsFading(true), 2000);
-        setTimeout(() => {
-          setErrorMessage(null);
-          setIsFading(false);
-        }, 3000);
+        revealAndFadeError(setErrorMessage, setIsFading, validation.message);
         return;
       }
     }
@@ -118,13 +129,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
       await refetchTotalSupply();
       await refetchMintCount();
     } catch (err: any) {
-      setErrorMessage("Mint failed. Please try again.");
-      setIsFading(false);
-      setTimeout(() => setIsFading(true), 2500);
-      setTimeout(() => {
-        setErrorMessage(null);
-        setIsFading(false);
-      }, 3000);
+      revealAndFadeError(setErrorMessage, setIsFading, "Mint failed. Please try again.", 2500);
     } finally {
       setIsMinting(false);
     }
