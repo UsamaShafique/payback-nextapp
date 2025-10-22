@@ -50,6 +50,8 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
 
   const [isMinting, setIsMinting] = React.useState(false);
   const [value, setValue] = React.useState<number | "">(1);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [isFading, setIsFading] = React.useState(false);
 
   const eligible = isEligible(activeKey);
   const quantity = value || 0;
@@ -99,7 +101,13 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
 
     for (const v of validations) {
       if (v.condition) {
-        toast.error(v.message, { duration: 3000 });
+        setErrorMessage(v.message);
+        setIsFading(false);
+        setTimeout(() => setIsFading(true), 2000);
+        setTimeout(() => {
+          setErrorMessage(null);
+          setIsFading(false);
+        }, 3000);
         return;
       }
     }
@@ -110,7 +118,13 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
       await refetchTotalSupply();
       await refetchMintCount();
     } catch (err: any) {
-      toast.error("Mint failed. Please try again.");
+      setErrorMessage("Mint failed. Please try again.");
+      setIsFading(false);
+      setTimeout(() => setIsFading(true), 2500);
+      setTimeout(() => {
+        setErrorMessage(null);
+        setIsFading(false);
+      }, 3000);
     } finally {
       setIsMinting(false);
     }
@@ -158,7 +172,7 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
 
           {isExpired && <p className="publicpara">This phase has expired.</p>}
           <button
-            className="mintbtn"
+            className={errorMessage || !eligible || !phaseState || phaseState.status !== "active"? "dullbtn" : "mintbtn"}
             onClick={handleMint}
             disabled={isMinting || quantity <= 0}
           >
@@ -167,6 +181,11 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
         </>
       ) : (
         <WalletButton className="connectbtn" />
+      )}
+      {errorMessage && (
+        <span className={`redspan eligiblespan ${isFading ? "fade-out" : ""}`}>
+          {errorMessage}
+        </span>
       )}
 
       <DynamicModal
