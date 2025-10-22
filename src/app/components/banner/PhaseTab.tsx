@@ -99,9 +99,9 @@ const PhaseTab: React.FC<PhaseTabProps> = ({ title, activeKey }) => {
       },
     ];
 
-    for (const v of validations) {
-      if (v.condition) {
-        setErrorMessage(v.message);
+    for (const validation of validations) {
+      if (validation?.condition) {
+        setErrorMessage(validation?.message);
         setIsFading(false);
         setTimeout(() => setIsFading(true), 2000);
         setTimeout(() => {
